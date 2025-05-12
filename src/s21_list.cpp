@@ -45,6 +45,7 @@ namespace s21{
 
     /*конструктор по умолчанию*/
     List(): head_(nullptr), tail_(nullptr), size_(0){}
+
     ~List(){
       while(head_){
         Node* temp = head_;
@@ -239,6 +240,7 @@ namespace s21{
     }
 
     class iterator {
+      friend class List<T>;
 
       private:
 
@@ -276,18 +278,32 @@ namespace s21{
     iterator begin() { return iterator(head_); }
     iterator end() { return iterator(nullptr ); }
     iterator insert(iterator pos, const_reference value){
-      if(head_){
-        for(auto *it = List.begin(); it != pos; it++){
-          List(value) temp;
-          temp.prev_ = it.prev_;
-          temp.next_ = it;
-          it.prev = temp;
+      
+      Node* newNode = new Node(value); // указатель на структуру и выделили стуктуре память
+      Node* pos_node = pos.current_;  // получаем указатель на текущий узел
+      newNode->next = pos_node; // в новой структуре указываем что след это иетратор
+      if(pos_node){
+        newNode->prev = pos_node->prev;
+        if(pos_node->prev){
+          pos_node->prev->next = newNode;
+        }else {
+          head_ = newNode;
         }
+        pos_node->prev = newNode;
+      }else {
+        // Вставка в конец (pos == end())
+        newNode->prev = tail_;
+        if (tail_) tail_->next = newNode;
+        tail_ = newNode;
+        if (!head_) head_ = newNode;
       }
+      ++size_;
+      return iterator(newNode);
+        
     }
 
     /*
-       ---- ИТЕРАТОРЫ ----
+       ---- ИТЕРАТОРЫ ----)
 🔁 Итераторы (обязательно):
  iterator begin()
 

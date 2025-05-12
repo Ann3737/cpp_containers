@@ -166,3 +166,53 @@ TEST(ListTest, ConstructorWithSizeDoubleDefaultValues) {
     EXPECT_EQ(val, 0.0);
   }
 }
+
+TEST(ListTest, InsertIntoEmptyList) {
+  s21::List<int> list;
+  auto it = list.begin();
+  list.insert(it, 42);
+
+  testing::internal::CaptureStdout();
+  list.print();  // ожидаем: 42
+  std::string output = testing::internal::GetCapturedStdout();
+  EXPECT_EQ(output, "42 \n");
+}
+
+TEST(ListTest, InsertAtBeginning) {
+  s21::List<int> list;
+  list.push_back(2);
+  list.push_back(3);
+  auto it = list.begin();  // позиция перед 2
+  list.insert(it, 1);
+
+  testing::internal::CaptureStdout();
+  list.print();  // ожидаем: 1 2 3
+  std::string output = testing::internal::GetCapturedStdout();
+  EXPECT_EQ(output, "1 2 3 \n");
+}
+
+TEST(ListTest, InsertInMiddle) {
+  s21::List<int> list;
+  list.push_back(1);
+  list.push_back(3);
+  auto it = ++list.begin();  // позиция перед 3
+  list.insert(it, 2);
+
+  testing::internal::CaptureStdout();
+  list.print();  // ожидаем: 1 2 3
+  std::string output = testing::internal::GetCapturedStdout();
+  EXPECT_EQ(output, "1 2 3 \n");
+}
+
+TEST(ListTest, InsertAtEnd) {
+  s21::List<int> list;
+  list.push_back(1);
+  list.push_back(2);
+  auto it = list.end();  // вставка перед end() == в конец
+  list.insert(it, 3);
+
+  testing::internal::CaptureStdout();
+  list.print();  // ожидаем: 1 2 3
+  std::string output = testing::internal::GetCapturedStdout();
+  EXPECT_EQ(output, "1 2 3 \n");
+}
