@@ -246,11 +246,14 @@ namespace s21{
 
       /**/
       Node* current_;  // текущий узел
-      
+
+      List<T>* owner_;
+
       public:
 
       /**/
-      iterator(Node* node) : current_(node) {}
+      iterator(Node* node, List<T>* owner) : current_(node), owner_(owner) {}
+
       // Разыменование — получаем значение
       T& operator*() const { return current_->data; }     // *it — получить данные
 
@@ -262,7 +265,11 @@ namespace s21{
 
       /**/
       iterator& operator--() {
-        current_ = current_->prev;
+        if (current_) {
+          current_ = current_->prev;
+        } else {
+          current_ = owner_->tail_;  // ← теперь ты можешь вернуться от end() к последнему
+        }
         return *this;
       }
 
@@ -275,8 +282,10 @@ namespace s21{
       }
     };
 
-    iterator begin() { return iterator(head_); }
-    iterator end() { return iterator(nullptr ); }
+    iterator begin() { return iterator(head_, this); }
+
+    iterator end() { return iterator(nullptr, this); }
+
     iterator insert(iterator pos, const_reference value){
       
       Node* newNode = new Node(value); // указатель на структуру и выделили стуктуре память
@@ -298,52 +307,80 @@ namespace s21{
         if (!head_) head_ = newNode;
       }
       ++size_;
-      return iterator(newNode);
-        
+      return iterator(newNode, this);
     }
 
+    void erase(iterator pos) {
+      if (!pos.current_) return; // Невалидный итератор — ничего не делаем
+
+      Node* node = pos.current_; // Узел, который будем удалять
+
+      // Обновляем указатели у соседей
+      if (node->prev) {
+        node->prev->next = node->next;
+      } else {
+        // Удаляемый элемент — первый
+        head_ = node->next;
+      }
+
+      if (node->next) {
+        node->next->prev = node->prev;
+      } else {
+        // Удаляемый элемент — последний
+        tail_ = node->prev;
+      }
+
+      delete node; // Освобождаем память
+      --size_;     // Уменьшаем размер
+    }
+    
+    void swap(List<T>& other) {
+      if (this != &other) {  // Убедимся, что это разные списки
+        Node* temp_head = this->head_;
+        this->head_ = other.head_;
+        other.head_ = temp_head;
+
+        Node* temp_tail = this->tail_;
+        this->tail_ = other.tail_;
+        other.tail_ = temp_tail;
+
+        ssize_t temp_size = this->size_;
+        this->size_ = other.size_;
+        other.size_ = temp_size;
+      }
+    }
+    /**/
+    void merge(List<T>& other){
+      auto it1 = this->begin();  // итератор для основного списка (A)
+      auto it2 = other.begin();  // итератор для списка, который перемещаем (B)
+      // Пока есть элементы в обоих списках
+      while(it1 != this->end() && it2 != other.end()){
+        if(*it1 <= *it2){
+          ++it1;
+        }else {
+          this->insert(it1, *it2);
+          //++it1;
+          ++it2;
+        }
+      }
+      // Если элементы остались в B, добавляем их в конец A
+      while (it2 != other.end()) {
+        this->insert(it1, *it2);
+        ++it2;
+        //++it1;
+      }
+      // Очищаем второй список
+      other.clear();
+
+    }
     /*
-       ---- ИТЕРАТОРЫ ----)
-🔁 Итераторы (обязательно):
- iterator begin()
+    void splice(const_iterator pos, list& other);// ❌ — не реализован
 
- iterator end()
+    void reverse();// ❌ — не реализован
 
- const_iterator begin() const
+    void unique();// ❌ — не реализован
 
- const_iterator end() const
-
-Для этого нужно реализовать собственный итератор, потому что T* не подходит для List (у тебя Node*, а не массив в памяти).
-
-➕ Метод вставки по итератору:
- iterator insert(const_iterator pos, const_reference value)
-
-❌ Метод удаления по итератору:
- iterator erase(const_iterator pos)
-
-    🔁 Операции обмена и слияния:
- void swap(List& other)
-
- void merge(List& other)
-
- void splice(const_iterator pos, List& other)
-
- void reverse()
-
- void unique()
-
- void sort()
+    void sort();// ❌ — не реализован
     */
-  
   };
-}
-
-/*
-int main(){
-  s21::List<int> myList = {1, 2, 3, 4};
-  myList.print();
-  myList.push_front(99);
-  myList.print();
-
-  return 0;
-}*/
+};
