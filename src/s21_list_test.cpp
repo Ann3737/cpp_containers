@@ -457,3 +457,105 @@ TEST(ListTest, MergeWithDuplicates) {
 
   EXPECT_TRUE(list2.empty());
 }
+
+TEST(ListTest, SpliceInMiddle) {
+    s21::List<int> a;
+    s21::List<int> b;
+    a.push_back(1);
+    a.push_back(4);
+    b.push_back(2);
+    b.push_back(3);
+
+    auto it = ++a.begin();  // перед 4
+    a.splice(it, b);
+
+    testing::internal::CaptureStdout();
+    a.print();
+    std::string output = testing::internal::GetCapturedStdout();
+    EXPECT_EQ(output, "1 2 3 4 \n");
+    EXPECT_TRUE(b.empty());
+}
+
+TEST(ListTest, SpliceAtBeginning) {
+    s21::List<int> a;
+    s21::List<int> b;
+    a.push_back(3);
+    a.push_back(4);
+    b.push_back(1);
+    b.push_back(2);
+
+    auto it = a.begin();  // перед 3
+    a.splice(it, b);
+
+    testing::internal::CaptureStdout();
+    a.print();
+    std::string output = testing::internal::GetCapturedStdout();
+    EXPECT_EQ(output, "1 2 3 4 \n");
+    EXPECT_TRUE(b.empty());
+}
+
+TEST(ListTest, SpliceAtEnd) {
+    s21::List<int> a;
+    s21::List<int> b;
+    a.push_back(1);
+    a.push_back(2);
+    b.push_back(3);
+    b.push_back(4);
+
+    auto it = a.end();  // вставим в конец
+    a.splice(it, b);
+
+    testing::internal::CaptureStdout();
+    a.print();
+    std::string output = testing::internal::GetCapturedStdout();
+    EXPECT_EQ(output, "1 2 3 4 \n");
+    EXPECT_TRUE(b.empty());
+}
+
+TEST(ListTest, SpliceEmptyIntoNonEmpty) {
+    s21::List<int> a;
+    s21::List<int> b;
+    a.push_back(1);
+    a.push_back(2);
+
+    auto it = a.begin();  // не важно, b пустой
+    a.splice(it, b);
+
+    testing::internal::CaptureStdout();
+    a.print();
+    std::string output = testing::internal::GetCapturedStdout();
+    EXPECT_EQ(output, "1 2 \n");
+    EXPECT_TRUE(b.empty());
+}
+
+TEST(ListTest, SpliceNonEmptyIntoEmpty) {
+    s21::List<int> a;
+    s21::List<int> b;
+    b.push_back(1);
+    b.push_back(2);
+
+    auto it = a.begin();  // a пустой, вставляем в начало (end == begin)
+    a.splice(it, b);
+
+    testing::internal::CaptureStdout();
+    a.print();
+    std::string output = testing::internal::GetCapturedStdout();
+    EXPECT_EQ(output, "1 2 \n");
+    EXPECT_TRUE(b.empty());
+}
+
+TEST(ListTest, SpliceSelf) {
+    s21::List<int> a;
+    a.push_back(1);
+    a.push_back(2);
+
+    auto it = a.begin();
+    a.splice(it, a);  // вставляем сам в себя (в начало)
+
+    testing::internal::CaptureStdout();
+    a.print();
+    std::string output = testing::internal::GetCapturedStdout();
+
+    // В зависимости от реализации splice, допустимо поведение без изменений
+    EXPECT_EQ(output, "1 2 \n");  // Или что ты считаешь корректным
+}

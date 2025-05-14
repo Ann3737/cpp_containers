@@ -21,7 +21,7 @@ namespace s21{
     Node* tail_;  // последняя
     size_t size_; // размер
   public:
-
+    
     using value_type = T;
     using reference = T&;
     using const_reference = const T&;
@@ -251,19 +251,19 @@ namespace s21{
 
       public:
 
-      /**/
+      /*констуктор*/
       iterator(Node* node, List<T>* owner) : current_(node), owner_(owner) {}
 
       // Разыменование — получаем значение
       T& operator*() const { return current_->data; }     // *it — получить данные
 
-      /**/
+      /*префиксный инкримент*/
       iterator& operator++() {
         current_ = current_->next;
         return *this;
       }
 
-      /**/
+      /*дикремент*/
       iterator& operator--() {
         if (current_) {
           current_ = current_->prev;
@@ -273,7 +273,7 @@ namespace s21{
         return *this;
       }
 
-      /**/
+      /*операторы сравнения*/
       bool operator!=(const iterator& other) const {      // сравнение
         return current_ != other.current_;
       }
@@ -282,10 +282,15 @@ namespace s21{
       }
     };
 
+    using const_iterator = iterator;// обманушка 
+    
+    /* начало списка для итератору */
     iterator begin() { return iterator(head_, this); }
-
+    
+    /* конец списка для итератора */
     iterator end() { return iterator(nullptr, this); }
-
+    
+    /* добавление элемента по итератору */
     iterator insert(iterator pos, const_reference value){
       
       Node* newNode = new Node(value); // указатель на структуру и выделили стуктуре память
@@ -310,6 +315,7 @@ namespace s21{
       return iterator(newNode, this);
     }
 
+    /* удаление элемента по итератору */
     void erase(iterator pos) {
       if (!pos.current_) return; // Невалидный итератор — ничего не делаем
 
@@ -334,6 +340,7 @@ namespace s21{
       --size_;     // Уменьшаем размер
     }
     
+    /* перемещение двух списков между собой  */
     void swap(List<T>& other) {
       if (this != &other) {  // Убедимся, что это разные списки
         Node* temp_head = this->head_;
@@ -349,7 +356,8 @@ namespace s21{
         other.size_ = temp_size;
       }
     }
-    /**/
+
+    /*слияне двух отсортированных списков*/
     void merge(List<T>& other){
       auto it1 = this->begin();  // итератор для основного списка (A)
       auto it2 = other.begin();  // итератор для списка, который перемещаем (B)
@@ -373,9 +381,36 @@ namespace s21{
       other.clear();
 
     }
-    /*
-    void splice(const_iterator pos, list& other);// ❌ — не реализован
+    
+    /* вставляет весь список перед позицией */
+    void splice(const_iterator pos, List<T>& other){
+      if (!other.empty() && this != &other){
 
+        Node* insert_pos = pos.current_;          // куда вставляем
+        Node* before = insert_pos ? insert_pos->prev : tail_; // что перед вставкой
+        Node* head_other = other.head_;          // начало второго списка
+        Node* tail_other = other.tail_;           // конец второго списка
+        if(before){ //если позиция была в середине вернется на предыдущий если end() то будет тэйл
+          before->next = head_other;  // связываем с головой 2го списка
+          head_other->prev = before;  // голова 2 списка с бефор
+        }else { // если позиция была 1ая то бефор будет нуль (перед хэдом)
+          head_ = head_other; // ставим список в начало
+        }
+        if(insert_pos){
+          tail_other->next = insert_pos;
+          insert_pos->prev = tail_other;
+        }else {
+          tail_ = tail_other;
+        }
+
+        size_ += other.size_;
+        other.head_ = other.tail_ = nullptr;
+        other.size_ = 0;
+      }
+
+
+    }
+    /*
     void reverse();// ❌ — не реализован
 
     void unique();// ❌ — не реализован
