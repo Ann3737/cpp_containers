@@ -559,3 +559,118 @@ TEST(ListTest, SpliceSelf) {
     // В зависимости от реализации splice, допустимо поведение без изменений
     EXPECT_EQ(output, "1 2 \n");  // Или что ты считаешь корректным
 }
+
+TEST(ListTest, frontThrowsOnEmptyList) {
+    s21::List<int> list;
+    EXPECT_THROW(list.front(), std::out_of_range);  
+}
+
+TEST(ListTest, frontReturnsFirstElement) {
+    s21::List<int> list;
+    list.push_back(10);
+    list.push_back(20);
+    list.push_back(30);
+
+    EXPECT_EQ(list.front(), 10);
+}
+
+TEST(ListTest, moveAssignmentOperator) {
+    s21::List<int> a;
+    a.push_back(1);
+    a.push_back(2);
+    a.push_back(3);
+
+    s21::List<int> b;
+    b.push_back(4);
+    b.push_back(5);
+
+    b = std::move(a);
+
+    EXPECT_TRUE(a.empty());
+    EXPECT_EQ(b.size(), 3);
+    EXPECT_EQ(b.front(), 1);
+}
+
+TEST(ListTest, copyAssignmentOperator) {
+    s21::List<int> a;
+    a.push_back(1);
+    a.push_back(2);
+    a.push_back(3);
+
+    s21::List<int> b;
+    b.push_back(4);
+    b.push_back(5);
+
+    b = a;
+
+    EXPECT_EQ(a.size(), 3);
+    EXPECT_EQ(b.size(), 3);
+    EXPECT_EQ(b.front(), 1);
+}
+
+TEST(ListTest, copyConstructor) {
+    s21::List<int> a;
+    a.push_back(1);
+    a.push_back(2);
+    a.push_back(3);
+
+    s21::List<int> b = a;
+
+    EXPECT_EQ(a.size(), 3);
+    EXPECT_EQ(b.size(), 3);
+    EXPECT_EQ(b.front(), 1);
+    EXPECT_NE(&a, &b);
+}
+
+TEST(ListTest, moveConstructor) {
+    s21::List<int> a;
+    a.push_back(1);
+    a.push_back(2);
+    a.push_back(3);
+
+    s21::List<int> b = std::move(a);
+
+    EXPECT_TRUE(a.empty());
+    EXPECT_EQ(b.size(), 3);
+    EXPECT_EQ(b.front(), 1);
+}
+
+TEST(ListTest, BackConstReturnsLastElement) {
+    // Создаем список и добавляем элементы
+    const s21::List<int> list = []{
+        s21::List<int> temp;
+        temp.push_back(10);
+        temp.push_back(20);
+        temp.push_back(30);
+        return temp;
+    }();
+
+    // Проверяем, что константный back() возвращает последний элемент
+    EXPECT_EQ(list.back(), 30);  // Для константного доступа
+}
+
+TEST(ListTest, BackConstThrowsOnEmptyList) {
+    // Создаем пустой список
+    const s21::List<int> list;
+
+    // Проверяем, что при попытке получить последний элемент выбрасывается исключение
+    EXPECT_THROW(list.back(), std::out_of_range);
+}
+
+TEST(ListTest, FrontConstReturnsFirstElement) {
+    const s21::List<int> list = []{
+        s21::List<int> temp;
+        temp.push_back(10);
+        temp.push_back(20);
+        temp.push_back(30);
+        return temp;
+    }();
+
+    EXPECT_EQ(list.front(), 10);  // первый добавленный элемент
+}
+
+TEST(ListTest, FrontConstThrowsOnEmptyList) {
+    const s21::List<int> list;
+
+    EXPECT_THROW(list.front(), std::out_of_range);
+}

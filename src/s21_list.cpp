@@ -56,7 +56,7 @@ namespace s21{
 
     /* конструктор копирования */
     List(const List& other) : List(){ // вызывает конструктор по умолчанию
-      Node* current = other->head_; // начинаем с головы чужого списка
+      Node* current = other.head_; // начинаем с головы чужого списка
       while(current){ // пока есть элементы
         push_back(current->data); // копируем данные
         current = current->next;  // двигаемся дальше
@@ -110,6 +110,7 @@ namespace s21{
         other.tail_ = nullptr;
         other.size_ = 0;
       }
+      return *this;  // Добавляем возврат *this
     }
 
     /*  ------ МЕТОДЫ ------*/
