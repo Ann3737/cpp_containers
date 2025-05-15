@@ -126,9 +126,17 @@ public:
     const_reference front() const { return this->data_[0]; }
     const_reference back() const { return this->data_[this->size_ - 1]; }
     iterator data() { return this->data_; }
+    const_iterator data() const noexcept { return this->data_; }
 
     // Iterators
     iterator begin() {
+        if (this->empty()) {
+            return this->end();
+        }
+        return this->data_;
+    }
+
+    const_iterator begin() const noexcept {
         if (this->empty()) {
             return this->end();
         }
@@ -143,10 +151,11 @@ public:
     }
 
     iterator end() { return this->data_ + this->size_; }
+    const_iterator end() const noexcept { return this->data_ + this->size_; }
     const_iterator cend() const noexcept { return this->data_ + this->size_; }
 
     // Capacity
-    bool empty() { return (this->size_ == 0); }
+    bool empty() const { return (this->size_ == 0); }
     size_type size() const { return this->size_; }
     size_type max_size() const {
         return std::numeric_limits<size_type>::max() / sizeof(value_type);
@@ -177,7 +186,16 @@ public:
     }
 
     size_type capacity() const { return this->capacity_; }
-    // void shrink_to_fit();
+
+    void shrink_to_fit() {
+        if (this->capacity_ > this->size_) {
+            vector newData(this->size_);
+            for (size_type i = 0; i < this->size_; ++i) {
+                newData.data_[i] = this->data_[i];
+            }
+            this->swap(newData);
+        }
+    }
 
     // Modifiers
     void clear() {
@@ -186,8 +204,30 @@ public:
         }
         this->size_ = 0;
     }
-    // iterator insert(iterator pos, const_reference value);
-    // void erase(iterator pos);
+
+    iterator insert(const_iterator pos, const_reference value) {
+        size_type index_pos = pos - this->begin();
+        if (this->size_ == this->capacity_) {
+            reserve(this->capacity_ > 0 ? this->capacity_ * 2 : 1);
+        }
+        for (size_type i = this->size_; i > index_pos; --i) {
+            new (this->data_ + i) value_type(this->data_[i - 1]);
+            this->data_[i - 1].~value_type();
+        }
+        new (this->data_ + index_pos) value_type(value);
+        ++this->size_;
+        return this->data_ + index_pos;
+    }
+
+    void erase(iterator pos) {
+        size_type index_pos = pos - this->begin();
+        this->data_[index_pos].~value_type();
+        for (size_type i = index_pos; i < this->size_ - 1; ++i) {
+            new (this->data_ + i) value_type(this->data_[i + 1]);
+            this->data_[i + 1].~value_type();
+        }
+        --this->size_;
+    }
 
     void push_back(const_reference value) {
         if (this->size_ == this->capacity_) {
@@ -196,7 +236,11 @@ public:
         new (this->data_ + this->size_) value_type(value);
         ++this->size_;
     }
-    // void pop_back();
+
+    void pop_back() {
+        this->data_[this->size_ - 1].~value_type();
+        --this->size_;
+    }
 
     void swap(vector& other) {
         if (this != &other) {
