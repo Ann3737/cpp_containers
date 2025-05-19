@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include "s21_list.cpp"  // Подключаем сам класс
 
+
 TEST(ListTest, PushBackWorks) {
   s21::List<int> list;
   list.push_back(10);
@@ -673,4 +674,282 @@ TEST(ListTest, FrontConstThrowsOnEmptyList) {
     const s21::List<int> list;
 
     EXPECT_THROW(list.front(), std::out_of_range);
+}
+
+TEST(ListTest, ReverseThenErase) {
+  s21::List<int> list;
+  list.push_back(100);
+  list.push_back(200);
+  list.push_back(300);
+
+  list.reverse();  // [300 200 100]
+
+  auto it = list.begin();  // указывает на 300
+  ++it;  // теперь указывает на 200
+  list.erase(it);  // удалим 200 → должно остаться: 300 100
+
+  testing::internal::CaptureStdout();
+  list.print();
+  std::string output = testing::internal::GetCapturedStdout();
+  EXPECT_EQ(output, "300 100 \n");
+}
+
+TEST(ListTest, ReverseTwiceRestoresOrder) {
+  s21::List<int> list;
+  list.push_back(10);
+  list.push_back(20);
+  list.push_back(30);
+
+  list.reverse();  // [30 20 10]
+  list.reverse();  // [10 20 30]
+
+  testing::internal::CaptureStdout();
+  list.print();
+  std::string output = testing::internal::GetCapturedStdout();
+  EXPECT_EQ(output, "10 20 30 \n");
+}
+
+TEST(ListTest, ReverseMultipleElements) {
+  s21::List<int> list;
+  list.push_back(1);
+  list.push_back(2);
+  list.push_back(3);
+  list.push_back(4);
+  list.push_back(5);
+
+  list.reverse();
+
+  testing::internal::CaptureStdout();
+  list.print();  // ожидаем: 5 4 3 2 1
+  std::string output = testing::internal::GetCapturedStdout();
+  EXPECT_EQ(output, "5 4 3 2 1 \n");
+}
+
+TEST(ListTest, ReverseTwoElements) {
+  s21::List<int> list;
+  list.push_back(10);
+  list.push_back(20);
+
+  list.reverse();
+
+  testing::internal::CaptureStdout();
+  list.print();  // ожидаем: 20 10
+  std::string output = testing::internal::GetCapturedStdout();
+  EXPECT_EQ(output, "20 10 \n");
+}
+
+TEST(ListTest, ReverseOneElement) {
+  s21::List<int> list;
+  list.push_back(42);
+
+  list.reverse();
+
+  testing::internal::CaptureStdout();
+  list.print();  // ожидаем: 42
+  std::string output = testing::internal::GetCapturedStdout();
+  EXPECT_EQ(output, "42 \n");
+}
+
+TEST(ListTest, ReverseEmptyList) {
+  s21::List<int> list;
+
+  list.reverse();
+
+  testing::internal::CaptureStdout();
+  list.print();  // ничего не должно напечататься
+  std::string output = testing::internal::GetCapturedStdout();
+  EXPECT_EQ(output, "\n");
+}
+
+TEST(ListSortTest, SortDescendingOrder) {
+  s21::List<int> lst = {10, 9, 8, 7, 6, 5, 4, 3, 2, 1};
+  s21::List<int> expected = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+  lst.sort();
+  EXPECT_EQ(lst, expected);
+}
+
+TEST(ListSortTest, SortAlmostSorted) {
+  s21::List<int> lst = {1, 2, 3, 5, 4, 6, 7, 8, 9, 10};
+  s21::List<int> expected = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+  lst.sort();
+  EXPECT_EQ(lst, expected);
+}
+
+TEST(ListSortTest, AlreadySorted) {
+  s21::List<int> lst = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+  s21::List<int> expected = lst;
+  lst.sort();
+  EXPECT_EQ(lst, expected);
+}
+
+TEST(ListSortTest, SameElements) {
+  s21::List<int> lst = {5, 5, 5, 5, 5};
+  s21::List<int> expected = lst;
+  lst.sort();
+  EXPECT_EQ(lst, expected);
+}
+
+TEST(ListSortTest, AlternatingHighLow) {
+  s21::List<int> lst = {10, 1, 9, 2, 8, 3, 7, 4, 6, 5};
+  s21::List<int> expected = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+  lst.sort();
+  EXPECT_EQ(lst, expected);
+}
+
+TEST(ListSortTest, SingleElement) {
+  s21::List<int> lst = {42};
+  s21::List<int> expected = lst;
+  lst.sort();
+  EXPECT_EQ(lst, expected);
+}
+
+TEST(ListSortTest, TwoElements) {
+  s21::List<int> lst = {2, 1};
+  s21::List<int> expected = {1, 2};
+  lst.sort();
+  EXPECT_EQ(lst, expected);
+}
+
+TEST(ListSortTest, EmptyList) {
+  s21::List<int> lst;
+  s21::List<int> expected;
+  lst.sort();
+  EXPECT_EQ(lst, expected);
+}
+
+TEST(ListSortTest, NegativeAndPositive) {
+  s21::List<int> lst = {-3, -1, -4, 2, 0, 1, -2};
+  s21::List<int> expected = {-4, -3, -2, -1, 0, 1, 2};
+  lst.sort();
+  EXPECT_EQ(lst, expected);
+}
+
+TEST(ListSortTest, MixedWithDuplicates) {
+  s21::List<int> lst = {4, 5, 5, 1, 3, 4, 2, 2, 6, 0};
+  s21::List<int> expected = {0, 1, 2, 2, 3, 4, 4, 5, 5, 6};
+  lst.sort();
+  EXPECT_EQ(lst, expected);
+}
+
+TEST(ListTest, UniqueWithConsecutiveDuplicates) {
+  s21::List<int> list;
+  list.push_back(1);
+  list.push_back(1);
+  list.push_back(2);
+  list.push_back(2);
+  list.push_back(3);
+  list.push_back(3);
+
+  list.unique();
+
+  testing::internal::CaptureStdout();
+  list.print();  // ожидаем: 1 2 3
+  std::string output = testing::internal::GetCapturedStdout();
+  EXPECT_EQ(output, "1 2 3 \n");
+}
+
+TEST(ListTest, UniqueWithoutDuplicates) {
+  s21::List<int> list;
+  list.push_back(1);
+  list.push_back(2);
+  list.push_back(3);
+
+  list.unique();
+
+  testing::internal::CaptureStdout();
+  list.print();  // ожидаем: 1 2 3
+  std::string output = testing::internal::GetCapturedStdout();
+  EXPECT_EQ(output, "1 2 3 \n");
+}
+
+TEST(ListTest, UniqueAllSameElements) {
+  s21::List<int> list;
+  list.push_back(5);
+  list.push_back(5);
+  list.push_back(5);
+  list.push_back(5);
+
+  list.unique();
+
+  testing::internal::CaptureStdout();
+  list.print();  // ожидаем: 5
+  std::string output = testing::internal::GetCapturedStdout();
+  EXPECT_EQ(output, "5 \n");
+}
+
+TEST(ListTest, UniqueAlternatingDuplicates) {
+  s21::List<int> list;
+  list.push_back(1);
+  list.push_back(1);
+  list.push_back(2);
+  list.push_back(3);
+  list.push_back(3);
+  list.push_back(4);
+
+  list.unique();
+
+  testing::internal::CaptureStdout();
+  list.print();  // ожидаем: 1 2 3 4
+  std::string output = testing::internal::GetCapturedStdout();
+  EXPECT_EQ(output, "1 2 3 4 \n");
+}
+
+TEST(ListTest, UniqueEmptyList) {
+  s21::List<int> list;
+
+  list.unique();
+
+  testing::internal::CaptureStdout();
+  list.print();  // ожидаем: ничего
+  std::string output = testing::internal::GetCapturedStdout();
+  EXPECT_EQ(output, "\n");
+}
+
+TEST(ListTest, UniqueSingleElement) {
+  s21::List<int> list;
+  list.push_back(42);
+
+  list.unique();
+
+  testing::internal::CaptureStdout();
+  list.print();  // ожидаем: 42
+  std::string output = testing::internal::GetCapturedStdout();
+  EXPECT_EQ(output, "42 \n");
+}
+
+TEST(ListTest, SplitEmptyList) {
+  s21::List<int> list;
+  
+  s21::List<int> second = list.split();  // делим пустой список
+
+  testing::internal::CaptureStdout();
+  second.print();  // ожидаем: пусто
+  std::string output = testing::internal::GetCapturedStdout();
+  EXPECT_EQ(output, "\n");
+
+  EXPECT_TRUE(list.empty());
+  EXPECT_TRUE(second.empty());
+}
+
+TEST(ListTest, NotEqualDifferentSizes) {
+  s21::List<int> a, b;
+  a.push_back(1);
+  a.push_back(2);
+  
+  b.push_back(1);
+
+  EXPECT_FALSE(a == b);
+}
+
+TEST(ListTest, NotEqualDifferentData) {
+  s21::List<int> a, b;
+  a.push_back(1);
+  a.push_back(2);
+  a.push_back(3);
+
+  b.push_back(1);
+  b.push_back(4);  // отличается
+  b.push_back(3);
+
+  EXPECT_FALSE(a == b);
 }

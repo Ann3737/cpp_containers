@@ -188,6 +188,26 @@ namespace s21{
     bool empty() const {
       return size_ == 0;
     }
+
+    bool operator==(const List& other) const {
+      if (this->size() != other.size()) {
+        return false;
+      }
+
+      Node* th = this->head_;
+      Node* oth = other.head_;
+
+      while (th && oth) {
+        if (th->data != oth->data) {
+          return false;
+        }
+        th = th->next;
+        oth = oth->next;
+      }
+
+      return true;
+    }
+
     
     size_type max_size() const {
       return std::numeric_limits<size_type>::max() / sizeof(Node);
@@ -312,6 +332,9 @@ namespace s21{
         tail_ = newNode;
         if (!head_) head_ = newNode;
       }
+      if (newNode->prev == nullptr) {
+        head_ = newNode;
+      }
       ++size_;
       return iterator(newNode, this);
     }
@@ -367,8 +390,9 @@ namespace s21{
         if(*it1 <= *it2){
           ++it1;
         }else {
-          this->insert(it1, *it2);
-          //++it1;
+          it1 = this->insert(it1, *it2);
+
+          ++it1;
           ++it2;
         }
       }
@@ -378,6 +402,7 @@ namespace s21{
         ++it2;
         //++it1;
       }
+      
       // Очищаем второй список
       other.clear();
 
@@ -411,12 +436,143 @@ namespace s21{
 
 
     }
-    /*
-    void reverse();// ❌ — не реализован
+    
+    /* реверсивный порядок */
+    void reverse(){
+      if(size_ > 1){
+        Node* current = head_;
+        while (current) {
+          Node* temp = current->next;
+          current->next = current->prev;
+          current->prev = temp;
+          current = temp;  // идём дальше (temp == old next)
+        }
+        Node* rec = head_;
+        head_ = tail_;
+        tail_ = rec;
+      }
 
-    void unique();// ❌ — не реализован
+    }
+    
+    /* удаляем одинаковые */
+    void unique(){
+      Node* current = head_;  //начинаем с головы
+      while(current && current->next){
+       
+       if(current->data == current->next->data){ // удаление
+          Node* temp = current->next; // временная для удалемого
+          
+          if(temp->next){ // если есть следующий
 
-    void sort();// ❌ — не реализован
-    */
+            temp->next->prev = current;
+            current->next = temp->next;
+          }else {
+            tail_ = current;
+            current->next = nullptr;
+          }
+
+          delete temp;// удаляем память
+
+        }else {
+          current = current->next;
+        }
+      }
+    }
+
+    
+    List<T> split(){
+      List<T> rightList; //список для ретерна
+      if (this->size() <= 1) // если размер списка меньше 1 или 1 вернем пустой список
+        return rightList;
+
+      Node* slow = this->head_; // медленный на голову
+      Node* fast = this->head_; //
+      Node* prev = nullptr; // чтобы разрезать
+      while(fast && fast->next){ 
+
+        prev = slow;
+        slow = slow->next;
+        fast = fast->next->next;// уходит в ноль за хэд
+      }
+      if(fast){
+        rightList.head_ = slow->next;
+        if (rightList.head_ != nullptr) {
+          rightList.head_->prev = nullptr;  // важное исправление!
+        }
+        this->tail_ = slow;
+        this->tail_->next = nullptr;
+
+
+      }else {
+        slow->prev = nullptr;
+        rightList.head_ = slow;
+        prev->next = nullptr;
+        this->tail_ = prev;
+      }
+
+      // Найдём новый хвост для правой части
+      Node* temp = rightList.head_;
+      size_t rightSize = 0;
+      while (temp) {
+        rightSize++;
+        rightList.tail_ = temp;
+        //std::cout << "SIZE+" << rightSize << std::endl;
+        temp = temp->next;
+        
+        
+      }
+      //rightList.tail_->next = nullptr;
+
+      //rightList.tail_ = temp->prev;
+      rightList.size_ = rightSize;
+      size_t leftsize = 0;
+      temp = this->head_;
+      while(temp){
+        leftsize++;
+        //std::cout << "SIZE --" << rightSize << std::endl;
+        temp = temp->next;
+      }
+      this->size_ = leftsize;
+      //std::cout<< leftsize << std::endl;
+      //rightList.print();
+      return rightList;
+    }
+    
+    void sort() {
+
+    if (this->size() <= 1)
+      return;
+
+    List<T> right = this->split();
+
+    this->sort();
+    right.sort();
+
+    this->merge(right);
+  }
+  /*
+  void debug_print_head() const {
+    std::cout << "HEAD: " << head_ << "\n";
+    if (head_) {
+      std::cout << "HEAD VALUE: " << head_->data << "\n";
+    }else {
+      std::cout << "HEAD is nullptr\n";
+    }
+  }*/
+
+    
   };
 };
+
+
+/*
+int main() {
+ 
+  s21::List<int> t{4, 5, 5, 1, 3, 4, 2, 2, 6, 0};
+  t.sort();
+  t.print();
+
+  return 0;
+}
+
+*/
