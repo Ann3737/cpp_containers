@@ -130,22 +130,40 @@ public:
     }
 
     // Доступ к указанному элементу
-    reference operator[](size_type pos) { return this->data_[pos]; }
+    reference operator[](size_type pos) {
+        return this->data_[pos];
+    }
 
     // Константный метод доступа к указанному элементу
-    const_reference operator[](size_type pos) const { return this->data_[pos]; }
+    const_reference operator[](size_type pos) const {
+        return this->data_[pos];
+    }
 
     // Доступ к первому элементу
-    const_reference front() const { return this->data_[0]; }
+    reference front() {
+        return this->data_[0];
+    }
+    const_reference front() const {
+        return this->data_[0];
+    }
 
     // Доступ к последнему элементу
-    const_reference back() const { return this->data_[this->size_ - 1]; }
+    reference back() {
+        return this->data_[this->size_ - 1];
+    }
+    const_reference back() const {
+        return this->data_[this->size_ - 1];
+    }
 
     // Доступ к указателю на массив
-    iterator data() { return this->data_; }
+    iterator data() {
+        return this->data_;
+    }
 
     // Константный метод доступа к указателю на массив
-    const_iterator data() const noexcept { return this->data_; }
+    const_iterator data() const noexcept {
+        return this->data_;
+    }
 
 
     // *-----ИТЕРАТОРЫ-----*
@@ -166,19 +184,27 @@ public:
     }
 
     // Возвращает итератор на конец вектора
-    iterator end() { return this->data_ + this->size_; }
+    iterator end() {
+        return this->data_ + this->size_;
+    }
 
     // Константный метод итератора на конец вектора
-    const_iterator end() const noexcept { return this->data_ + this->size_; }
+    const_iterator end() const noexcept {
+        return this->data_ + this->size_;
+    }
 
 
     // *-----МЕТОДЫ ДОСТУПА К ИНФОРМАЦИИ О ЗАПОЛНЕННОСТИ ВЕКТОРА-----*
 
     // Проверяет, пуст ли вектор
-    bool empty() const { return (this->size_ == 0); }
+    bool empty() const {
+        return (this->size_ == 0);
+    }
     
     // Возвращает количество элементов в векторе
-    size_type size() const { return this->size_; }
+    size_type size() const {
+        return this->size_;
+    }
 
     // Возвращает максимально допустимое количество элементов в векторе
     size_type max_size() const {
@@ -186,7 +212,9 @@ public:
     }
 
     // Возвращает количество элементов, которые могут на данный момент храниться в векторе
-    size_type capacity() const { return this->capacity_; }
+    size_type capacity() const {
+        return this->capacity_;
+    }
 
     // Резервирует память для вектора
     void reserve(size_type size) {

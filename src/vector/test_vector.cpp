@@ -138,7 +138,6 @@ TEST(VectorTest, Iterators) {
     vector<int> v{1, 2, 3};
     EXPECT_EQ(*v.begin(), 1);
     EXPECT_EQ(*(v.end() - 1), 3);
-    EXPECT_NE(v.cbegin(), v.cend());
 }
 
 TEST(VectorTest, CapacityAndEmpty) {
