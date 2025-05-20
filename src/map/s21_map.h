@@ -13,94 +13,114 @@ public:
     using key_type = Key;
     using mapped_type = T;
     using value_type = std::pair<const key_type, mapped_type>;
-    using reference = value_type &;
-    using const_reference = const value_type &;
+    using reference = value_type&;
+    using const_reference = const value_type&;
     using iterator = MapIterator<K, T>; // BinaryTree::iterator
     using const_iterator = MapConstIterator<K, T>; // BinaryTree::const_iterator
     using size_type = size_t;
 
-    // *-----Constructors & destructor-----*
+     struct BaseNode {
+        BaseNode* left;
+        BaseNode* right;
+        BaseNode* parent;
+    };
 
-    // Default constructor
+    struct Node : BaseNode {
+        std::pair<const Key, T> kt;
+        bool red;
+    };
+
+    // *-----КОНСТРУКТОРЫ И ДЕСТРУКТОР-----*
+
+    // Конструктор по умолчанию
     map();
 
-    // Initializer list constructor
+    // Конструтор со списком инициализации
     map(std::initializer_list<value_type> const &items);
 
-    // Copy constructor
+    // Конструктор копирования
     map(const map &m);
 
-    // Move constructor
+    // Конструктор перемещения
     map(map &&m);
 
-    // Destructor
+    // Деструктор
     ~map();
 
-    // Assignment operator overload for moving object
+    // Оператор присваивания
     operator=(map &&m);
 
 
-    // *-----Accessors-----*
+    // *-----МЕТОДЫ ДОСТУПА К ЭЛЕМЕНТАМ СЛОВАРЯ-----*
 
-    // Access specified element with bounds checking
+    // Доступ к указанному элементу с проверкой границ
     T& at(const Key& key);
 
-    // Access or insert specified element
+    const T& at(const Key& key) const;
+
+    // Доступ или вставка указанного элемента
     T& operator[](const Key& key);
 
 
-    // *-----Iterators-----*
+    // *-----ИТЕРАТОРЫ-----*
 
-    // Returns an iterator to the beginning
+    // Возвращает итератор на начало словаря
     iterator begin();
 
-    // Returns an iterator to the end
+    // Возвращает итератор на конец словаря
     iterator end();
 
 
-    // *-----Capacity-----*
+    // *-----МЕТОДЫ ДОСТУПА К ИНФОРМАЦИИ О ЗАПОЛНЕННОСТИ СЛОВАРЯ-----*
 
-    // Checks whether the container is empty
+    // Проверяет, пуст ли словарь
     bool empty();
 
-    // Returns the number of elements
+    // Возвращает количество элементов словаря
     size_type size();
 
-    // Returns the maximum possible number of elements
+    // Возвращает максимально возможное количество элементов словаря
     size_type max_size();
 
 
-    // *-----Modifiers-----*
+    // *-----МЕТОДЫ ИЗМЕНЕНИЯ СЛОВАРЯ-----*
 
-    // Clears the contents
+    // Очищает словарь
     void clear();
 
-    // Inserts node and returns iterator to where the element is in the container 
-    // and bool denoting whether the insertion took place
+    // Вставляет узел и возвращает итератор, 
+    // указывающий на местонахождение элемента в контейнере,
+    // а так же возвращает логическое значение, указывающее, произошла ли вставка
     std::pair<iterator, bool> insert(const value_type& value);
 
-    // Inserts value by key and returns iterator to where the element is in the container 
-    // and bool denoting whether the insertion took place
+    // Вставляет значение по ключу и возвращает итератор, 
+    // указывающий на местонахождение элемента в контейнере,
+    // а так же возвращает логическое значение, указывающее, произошла ли вставка
+    std::pair<iterator, bool> insert(const Key& key, const T& obj);
+
+    // Вставляет элемент или назначает его текущему элементу, если ключ уже существует
     std::pair<iterator, bool> insert_or_assign(const Key& key, const T& obj);
 
-    // Erases element at pos
+    // Удаляет элемент в указанной позиции
     void erase(iterator pos);
 
-    // Swaps the contents
+    // Меняет местами содержимое словарей
     void swap(map& other);
 
-    // Splices nodes from another container
+    // Сращивает узлы из другого контейнера
     void merge(map& other);
 
 
-    // *-----Lookup-----*
+    // *-----МЕТОДЫ ДЛЯ ПРОСМОТРА СОДЕРЖИМОГО СЛОВАРЯ-----*
 
-    // Checks if there is an element with key equivalent to key in the container
+    // Проверяет, есть ли элемент с ключом, эквивалентным ключу в словаре
     bool contains(const Key& key);
 
 
 private:
-
+    BaseNode* fakeNode_;
+    BaseNode* begin_;
+    size_type size_;
 
 };
 }
