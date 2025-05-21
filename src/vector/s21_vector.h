@@ -8,7 +8,7 @@
 #include <limits>
 #include <new>
 
-namespace s21{
+namespace s21 {
 template <typename T>
 class vector {
 public:
@@ -17,8 +17,10 @@ public:
     using value_type = T;
     using reference = T&;
     using const_reference = const T&;
-    using iterator = T*;
-    using const_iterator = const T*;
+    using pointer = T*;
+    using const_pointer = const T*;
+    using iterator = pointer;
+    using const_iterator = const_pointer;
     using size_type = size_t;
 
     // *-----КОНСТРУКТОРЫ И ДЕСТРУКТОР-----*
@@ -318,7 +320,7 @@ private:
     iterator data_;
 
     // Выделяет память для вектора
-    iterator _AllocateData(size_type cap) {
+    pointer _AllocateData(size_type cap) {
         return reinterpret_cast<iterator>(::operator new(sizeof(value_type) * cap));
     }
 
