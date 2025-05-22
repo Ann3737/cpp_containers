@@ -6,7 +6,7 @@
 #include <cstddef>
 #include <limits>
 #include <new>
-#include <vector>
+#include <utility>
 
 namespace s21 {
 template <typename T>
@@ -47,7 +47,7 @@ public:
         size_type i = 0;
         try {
             for (const auto &item : items) {
-                new (this->data_ + i) value_type(item);
+                new (this->data_ + i) value_type(std::move_if_noexcept(item));
                 ++i;
             }
         } catch (...) {
@@ -58,7 +58,7 @@ public:
     }
     
     // Конструктор копирования
-    constexpr vector(const vector &v)
+    vector(const vector &v)
             : size_(v.size_), capacity_(v.size_), data_(_AllocateData(v.capacity_)) {
         size_type i = 0;
         try {
@@ -88,14 +88,14 @@ public:
     // *-----МЕТОДЫ ДОСТУПА К ЭЛЕМЕНТАМ ВЕКТОРА-----*
 
     // Доступ к указанному элементу с проверкой границ
-    constexpr reference at(size_type pos) {
+    reference at(size_type pos) {
         if (pos >= this->size_) {
             throw std::out_of_range("Index out of range");
         }
         return this->data_[pos];
     }
 
-    constexpr const_reference at(size_type pos) const {
+    const_reference at(size_type pos) const {
         if (pos >= this->size_) {
             throw std::out_of_range("Index out of range");
         }
@@ -207,7 +207,7 @@ public:
     }
 
     // Резервирует память для вектора
-    constexpr void reserve(size_type size) {
+    void reserve(size_type size) {
         if (size <= this->capacity_) {
             return;
         }
@@ -215,7 +215,7 @@ public:
         size_type i = 0;
         try {
             for (; i < this->size_; ++i) {
-                new(newData + i) value_type(this->data_[i]);
+                new(newData + i) value_type(std::move_if_noexcept(this->data_[i]));
             }
         } catch (...) {
             for (size_type new_i = 0; new_i < i; ++new_i) {
@@ -231,13 +231,13 @@ public:
     }
 
     // Удаляет неиспользуемую память в векторе
-    constexpr void shrink_to_fit() {
+    void shrink_to_fit() {
         if (this->capacity_ > this->size_) {
             pointer newData = _AllocateData(this->size_);
             size_type i = 0;
             try {
                 for (; i < this->size_; ++i) {
-                    new(newData + i) value_type(this->data_[i]);
+                    new(newData + i) value_type(std::move_if_noexcept(this->data_[i]));
                 }
             } catch (...) {
                 for (size_type new_i = 0; new_i < i; ++new_i) {
@@ -258,8 +258,10 @@ public:
 
     // Очищает содержимое вектора
     constexpr void clear() noexcept {
-        for (size_type i = 0; i < this->size_; ++i) {
-            this->data_[i].~value_type();
+        if (this->data_ != nullptr) {
+            for (size_type i = 0; i < this->size_; ++i) {
+                this->data_[i].~value_type();
+            }
         }
         this->size_ = 0;
     }
@@ -268,10 +270,10 @@ public:
     constexpr iterator insert(const_iterator pos, const_reference value) {
         size_type index_pos = pos - this->begin();
         if (this->size_ == this->capacity_) {
-            _CalculateCapacity();
+            this->reserve(_CalculateCapacity());
         }
         for (size_type i = this->size_; i > index_pos; --i) {
-            new (this->data_ + i) value_type(this->data_[i - 1]);
+            new (this->data_ + i) value_type(std::move_if_noexcept(this->data_[i - 1]));
             this->data_[i - 1].~value_type();
         }
         new (this->data_ + index_pos) value_type(value);
@@ -281,10 +283,13 @@ public:
 
     // Удаляет элемент в указанной позиции
     iterator erase(iterator pos) {
+        if (this->data_ == nullptr) {
+            return this->data_;
+        }
         size_type index_pos = pos - this->begin();
         this->data_[index_pos].~value_type();
         for (size_type i = index_pos; i < this->size_ - 1; ++i) {
-            new (this->data_ + i) value_type(this->data_[i + 1]);
+            new (this->data_ + i) value_type(std::move_if_noexcept(this->data_[i + 1]));
             this->data_[i + 1].~value_type();
         }
         --this->size_;
@@ -294,7 +299,7 @@ public:
     // Вставляет элемент в конец вектора
     constexpr void push_back(const_reference value) {
         if (this->size_ == this->capacity_) {
-            _CalculateCapacity();
+            this->reserve(_CalculateCapacity());
         }
         new (this->data_ + this->size_) value_type(value);
         ++this->size_;
@@ -302,7 +307,10 @@ public:
 
     // Удаляет последний элемент вектора
     constexpr void pop_back() {
-        this->end()->~value_type();
+        if (this->data_ == nullptr) {
+            return;
+        }
+        this->data_[this->size_ - 1].~value_type();
         --this->size_;
     }
 
@@ -335,7 +343,7 @@ private:
         }
     }
 
-    size_type _CalculateCapacity() const noexcept {
+    constexpr size_type _CalculateCapacity() const noexcept {
         return (this->capacity_ > 0 ? this->capacity_ * 2 : 1);
     }
 };
