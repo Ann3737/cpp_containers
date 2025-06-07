@@ -310,7 +310,7 @@ public:
         if (this->data_ == nullptr) {
             return;
         }
-        this->data_[this->size_ - 1].~value_type();
+        this->back().~value_type();
         --this->size_;
     }
 
