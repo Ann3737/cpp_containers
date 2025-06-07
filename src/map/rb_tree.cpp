@@ -127,7 +127,7 @@ public:
             }
             rebalanceAfterErase(replacementNode, parentNode);
         } else {
-            // Case 3: deleted node has both children :)
+            // Case 3: deleted node has both children
             Node* temp = current->right;
             while (temp->left) {
                 temp = temp->left;
