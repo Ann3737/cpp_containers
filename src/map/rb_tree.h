@@ -14,6 +14,8 @@ template <typename Key, typename Value>
 class rbtree {
 public:
     using value_type = std::pair<const Key, Value>;
+    class iterator;
+    class const_iterator;
 
 private:
     struct Node {
@@ -32,15 +34,103 @@ private:
                 , right(nullptr), red(true) {}
     };
 
+    friend class iterator;
+    friend class const_iterator;
+
 public:
-    rbtree() : root_(nullptr) {}
+    rbtree() : root_(nullptr), size_(0) {}
 
     ~rbtree() {
         clearTree(this->root_);
+        this->root_ = nullptr;
+        this->size_ = 0;
     }
 
-    Node* find(const Key& key) const {
-        Node* current = this->root_;
+    iterator find(const Key& key) {
+        return iterator(findNode<Node*>(this->root_, key));
+    }
+
+    const_iterator find(const Key& key) const {
+        return const_iterator(findNode<const Node*>(this->root_, key));
+    }
+
+    template<typename Iter>
+    iterator erase(Iter it) {
+        Node* temp = it.current;
+        it++;
+        eraseNode(temp);
+        return iterator(it.current);
+    }
+
+    size_t size() const {
+        return this->size_;
+    }
+
+    bool empty() const {
+        return (this->size_ == 0);
+    }
+
+    iterator end() const {
+        return iterator(nullptr);
+    }
+
+    const_iterator end() const {
+        return const_iterator(nullptr);
+    }
+
+    iterator begin() const {
+        Node* node = this->root_;
+        while (node && node->left) {
+            node = node->left;
+        }
+        return iterator(node);
+    }
+
+    const_iterator begin() const {
+        Node* node = this->root_;
+        while (node && node->left) {
+            node = node->left;
+        }
+        return const_iterator(node);
+    }
+
+    void print() const {
+        printFancyHelper(root_, "", false, true);
+    }
+
+    void printFancyHelper(Node* node, const std::string& prefix, bool isLeft, bool isRoot) const {
+        if (!node) return;
+
+        if (node->right)
+            printFancyHelper(node->right, prefix + (isRoot ? "    " : (isLeft ? "│   " : "    ")), false, false);
+
+        std::cout << prefix;
+        if (!isRoot)
+            std::cout << (isLeft ? "└── " : "┌── ");
+        std::cout << "(" << node->value.first << "," << node->value.second << ")" << (node->red ? "(R)" : "(B)") << "\n";
+
+        if (node->left)
+            printFancyHelper(node->left, prefix + (isRoot ? "    " : (isLeft ? "    " : "│   ")), true, false);
+    }
+
+
+
+
+private:
+    Node* root_;
+    size_t size_;
+
+    void clearTree(Node* tree) {
+        if (tree) {
+            clearTree(tree->left);
+            clearTree(tree->right);
+            delete tree;
+        }
+    }
+
+    template<typename NodePtr>
+    NodePtr findNode(NodePtr root, const Key& key) const {
+        NodePtr current = root;
         while (current && current->value.first != key) {
             if (key < current->value.first) {
                 current = current->left;
@@ -51,8 +141,8 @@ public:
         return current;
     }
 
-    void erase(const Key& key) {
-        Node* current = this->find(key);
+    void eraseNode(Node* node) {
+        Node* current = node;
         if (!current) {
             return;
         }
@@ -74,6 +164,9 @@ public:
             delete current;
             if (!isEraseNodeRed) {
                 rebalanceAfterErase(replacementNode, parentNode);
+            }
+            if (this->size_ > 0) {
+                this->size_--;
             }
             return;
         } else if (!current->left || !current->right) {
@@ -100,6 +193,9 @@ public:
             }
             if (!isEraseNodeRed) {
                 rebalanceAfterErase(replacementNode, parentNode);
+            }
+            if (this->size_ > 0) {
+                this->size_--;
             }
             return;
         } else {
@@ -136,14 +232,16 @@ public:
             if (!isEraseNodeRed) {
                 rebalanceAfterErase(replacementNode, parentNode);
             }
+            if (this->size_ > 0) {
+                this->size_--;
+            }
         }
     }
 
-   
-    Node* insert(const Key& key, const Value& value) {
-        Node* current = this->root_;
-        Node* parent = nullptr;
-
+    template<typename NodePtr>
+    std::pair<NodePtr, bool> insert(const Key& key, const Value& value) {
+        NodePtr current = this->root_;
+        NodePtr parent = nullptr;
         
         while (current != nullptr) {
             parent = current;
@@ -153,11 +251,11 @@ public:
                 current = current->right;
             } else {
                 // if key already in the tree - do nothing (std::map)
-                return current;
+                return {current, false};
             }
         }
 
-        Node* newNode = new Node({key, value}, parent);
+        NodePtr newNode = new Node({key, value}, parent);
         
         if (parent == nullptr) {
             this->root_ = newNode;
@@ -167,42 +265,10 @@ public:
             parent->right = newNode;
         }
         rebalanceAfterInsert(newNode);
-        return newNode;
+        this->size_++;
+        return {newNode, true};
     }
 
-
-    void print() const {
-        printFancyHelper(root_, "", false, true);
-    }
-
-    void printFancyHelper(Node* node, const std::string& prefix, bool isLeft, bool isRoot) const {
-        if (!node) return;
-
-        if (node->right)
-            printFancyHelper(node->right, prefix + (isRoot ? "    " : (isLeft ? "│   " : "    ")), false, false);
-
-        std::cout << prefix;
-        if (!isRoot)
-            std::cout << (isLeft ? "└── " : "┌── ");
-        std::cout << "(" << node->value.first << "," << node->value.second << ")" << (node->red ? "(R)" : "(B)") << "\n";
-
-        if (node->left)
-            printFancyHelper(node->left, prefix + (isRoot ? "    " : (isLeft ? "    " : "│   ")), true, false);
-    }
-
-
-
-
-private:
-    Node* root_;
-
-    void clearTree(Node* tree) {
-        if (tree) {
-            clearTree(tree->left);
-            clearTree(tree->right);
-            delete tree;
-        }
-    }
     void rebalanceAfterInsert(Node* current) {
         while (current != this->root_ && current->parent && current->parent->red) {
             Node* parent = current->parent;
@@ -278,9 +344,9 @@ private:
                 brother->red = true;
                 current = parent;
                 parent = current->parent;
-                if (current && current->red) {
-                    current->red = false;
-                }
+                // if (current && current->red) {
+                //     current->red = false;
+                // }
                 continue;
             }
 
@@ -381,8 +447,14 @@ private:
     }
 
 public:
-    struct iterator {
+    class iterator {
         Node* current;
+    public:
+        iterator() = default;
+        
+        iterator(Node* node) : current(node) {}
+
+        iterator(const Node* node) : current(node) {}
 
         iterator(const rbtree& tree) : current(tree.root_) {
             while (current && current->left) {
@@ -390,6 +462,45 @@ public:
             }
         }
 
+        value_type& operator*() const {
+            return current->value;
+        }
+
+        value_type* operator->() const {
+            return &(current->value);
+        }
+
+        iterator& operator++() {
+            next();
+            return *this;
+        }
+
+        iterator operator++(int) {
+            iterator temp = *this;
+            next();
+            return temp;
+        }
+
+        iterator& operator--() {
+            prev();
+            return *this;
+        }
+
+        iterator operator--(int) {
+            iterator temp = *this;
+            prev();
+            return temp;
+        }
+
+        bool operator==(const iterator& other) const {
+            return (this->current == other->current);
+        }
+
+        bool operator!=(const iterator& other) const {
+            return (this->current != other->current);
+        }
+
+    private:
         void next() {
             if (!current) {
                 return;
@@ -409,56 +520,118 @@ public:
                 current = parent;
             }
         }
+
+        void prev() {
+            if (!current) {
+                return;
+            }
+            if (current->left) {
+                Node* next = current->left;
+                while(next->right) {
+                    next = next->right;
+                }
+                current = next;
+            } else {
+                Node* parent = current->parent;
+                while (parent && current == parent->left) {
+                    current = parent;
+                    parent = parent->parent;
+                }
+                current = parent;
+            }
+        }
+    };
+
+    class const_iterator {
+        Node* current;
+    public:
+        const_iterator() = default;
+        
+        const_iterator(const rbtree& tree) : current(tree.root_) {
+            while (current && current->left) {
+                current = current->left;
+            }
+        }
+
+        const value_type& operator*() const {
+            return current->value;
+        }
+
+        const value_type* operator->() const {
+            return &(current->value);
+        }
+
+        const_iterator& operator++() {
+            next();
+            return *this;
+        }
+
+        const_iterator operator++(int) {
+            const_iterator temp = *this;
+            next();
+            return temp;
+        }
+
+        const_iterator& operator--() {
+            prev();
+            return *this;
+        }
+
+        const_iterator operator--(int) {
+            const_iterator temp = *this;
+            prev();
+            return temp;
+        }
+
+        bool operator==(const const_iterator& other) const {
+            return (this->current == other->current);
+        }
+
+        bool operator!=(const const_iterator& other) const {
+            return (this->current != other->current);
+        }
+
+    private:
+        void next() {
+            if (!current) {
+                return;
+            }
+            if (current->right) {
+                Node* next = current->right;
+                while (next->left) {
+                    next = next->left;
+                }
+                current = next;
+            } else {
+                Node* parent = current->parent;
+                while (parent && current == parent->right) {
+                    current = parent;
+                    parent = parent->parent;
+                }
+                current = parent;
+            }
+        }
+
+        void prev() {
+            if (!current) {
+                return;
+            }
+            if (current->left) {
+                Node* next = current->left;
+                while(next->right) {
+                    next = next->right;
+                }
+                current = next;
+            } else {
+                Node* parent = current->parent;
+                while (parent && current == parent->left) {
+                    current = parent;
+                    parent = parent->parent;
+                }
+                current = parent;
+            }
+        }
     };
 };
-
-// int main() {
-//    rbtree<int, int> tree;
-//    tree.insert(1, 0);
-//    tree.insert(2, 0);
-//    tree.insert(3, 0);
-//    tree.insert(4, 0);
-//    tree.insert(5, 0);
-//    tree.insert(6, 3);
-//    tree.insert(7, 0);
-//    tree.insert(8, 0);
-//    tree.insert(9, 0);
-//    tree.insert(10, 0);
-//    tree.print();
-//    tree.erase(5);
-//    tree.print();
-
-//    rbtree<int, int> tree2;
-
-
-//    rbtree<int, int>::iterator it(tree);
-
-//    for (int i = 0; i < 10; i++) {
-//     printf("%d\n", it.current->value.first);
-//     it.next();
-//    }
-
-//    rbtree<int, int> tree2;
-//    tree2.insert(15, 1);
-//    tree2.insert(14, 2);
-//    tree2.insert(10, 3);
-//    tree2.insert(9, 4); 
-//    tree2.insert(19, 5);
-//    tree2.insert(20, 6);
-//    tree2.insert(21, 7);
-//    tree2.print();
-
-//    rbtree<int, int> tree3;
-//    tree3.insert(1, 1);
-//    tree3.insert(2, 2);
-//    tree3.insert(3, 3);
-//    tree3.insert(4, 4);
-//    tree3.insert(5, 5);
-//    tree3.print();
-
-//    return 0;
-// }
-
-
 
 #endif

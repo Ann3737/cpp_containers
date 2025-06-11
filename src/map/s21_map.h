@@ -5,6 +5,7 @@
 #include <initializer_list>
 #include <stdexcept>
 #include <cstddef>
+#include "rb_tree.h"
 
 namespace s21 {
 template<typename Key, typename T>
@@ -15,20 +16,10 @@ public:
     using value_type = std::pair<const key_type, mapped_type>;
     using reference = value_type&;
     using const_reference = const value_type&;
-    using iterator = MapIterator<K, T>; // BinaryTree::iterator
-    using const_iterator = MapConstIterator<K, T>; // BinaryTree::const_iterator
+    using iterator = typename rbtree<Key, T>::iterator;
+    using const_iterator = typename rbtree<Key, T>::const_iterator;
     using size_type = size_t;
 
-     struct BaseNode {
-        BaseNode* left;
-        BaseNode* right;
-        BaseNode* parent;
-    };
-
-    struct Node : BaseNode {
-        std::pair<const Key, T> kt;
-        bool red;
-    };
 
     // *-----КОНСТРУКТОРЫ И ДЕСТРУКТОР-----*
 
@@ -48,18 +39,21 @@ public:
     ~map();
 
     // Оператор присваивания
-    operator=(map &&m);
+    map&& operator=(map &&m);
+
+    // Оператор копирования
+    map& operator=(const map& m);
 
 
     // *-----МЕТОДЫ ДОСТУПА К ЭЛЕМЕНТАМ СЛОВАРЯ-----*
 
     // Доступ к указанному элементу с проверкой границ
-    T& at(const Key& key);
+    T& at(const key_type& key);
 
-    const T& at(const Key& key) const;
+    const T& at(const key_type& key) const;
 
     // Доступ или вставка указанного элемента
-    T& operator[](const Key& key);
+    T& operator[](const key_type& key);
 
 
     // *-----ИТЕРАТОРЫ-----*
@@ -67,8 +61,12 @@ public:
     // Возвращает итератор на начало словаря
     iterator begin();
 
+    const_iterator begin() const;
+
     // Возвращает итератор на конец словаря
     iterator end();
+
+    const_iterator end() const;
 
 
     // *-----МЕТОДЫ ДОСТУПА К ИНФОРМАЦИИ О ЗАПОЛНЕННОСТИ СЛОВАРЯ-----*
@@ -96,10 +94,12 @@ public:
     // Вставляет значение по ключу и возвращает итератор, 
     // указывающий на местонахождение элемента в контейнере,
     // а так же возвращает логическое значение, указывающее, произошла ли вставка
-    std::pair<iterator, bool> insert(const Key& key, const T& obj);
+    std::pair<iterator, bool> insert(const key_type& key, 
+                const mapped_type& obj);
 
     // Вставляет элемент или назначает его текущему элементу, если ключ уже существует
-    std::pair<iterator, bool> insert_or_assign(const Key& key, const T& obj);
+    std::pair<iterator, bool> insert_or_assign(const key_type& key, 
+                const mapped_type& obj);
 
     // Удаляет элемент в указанной позиции
     void erase(iterator pos);
@@ -114,12 +114,11 @@ public:
     // *-----МЕТОДЫ ДЛЯ ПРОСМОТРА СОДЕРЖИМОГО СЛОВАРЯ-----*
 
     // Проверяет, есть ли элемент с ключом, эквивалентным ключу в словаре
-    bool contains(const Key& key);
+    bool contains(const key_type& key);
 
 
 private:
-    BaseNode* fakeNode_;
-    BaseNode* begin_;
+    rbtree<key_type, mapped_type> tree_;
     size_type size_;
 
 };
