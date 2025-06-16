@@ -14,6 +14,7 @@ template <typename Key, typename Value>
 class rbtree {
 public:
     using value_type = std::pair<const Key, Value>;
+    using size_type = size_t;
     class iterator;
     class const_iterator;
 
@@ -40,10 +41,50 @@ private:
 public:
     rbtree() : root_(nullptr), size_(0) {}
 
+    rbtree(const rbtree &tree) : rbtree() {
+        for (auto it = tree.begin(); it != tree.end(); ++it) {
+            this->insert(*it);
+        }
+    }
+
+    rbtree(rbtree &&tree) noexcept : size_(tree.size_), root_(tree.root_) {
+        tree.size_ = 0;
+        tree.root_ = nullptr;
+    }
+
     ~rbtree() {
-        clearTree(this->root_);
-        this->root_ = nullptr;
+        if (this->root_) {
+            clearTree(this->root_);
+            this->root_ = nullptr;
+        }
         this->size_ = 0;
+    }
+
+    rbtree& operator=(const rbtree& tree) {
+        if (this != &tree) {
+            if (this->root_) {
+                this->clearTree(this->root_);
+            }
+            this->root_ = nullptr;
+            this->size_ = 0;
+            for (auto it = tree.begin(); it != tree.end(); ++it) {
+                this->insert(*it);
+            }
+        }
+        return *this;
+    }
+
+    rbtree& operator=(rbtree &&tree) noexcept {
+        if (this != &tree) {
+            if (this->root_) {
+                this->clearTree(this->root_);
+            }
+            this->size_ = tree.size_;
+            this->root_ = tree.root_;
+            tree.size_ = 0;
+            tree.root_ = nullptr;
+        }
+        return *this;
     }
 
     iterator find(const Key& key) {
@@ -54,16 +95,40 @@ public:
         return const_iterator(findNode<const Node*>(this->root_, key));
     }
 
-    template<typename Iter>
-    iterator erase(Iter it) {
-        Node* temp = it.current;
-        it++;
-        eraseNode(temp);
-        return iterator(it.current);
+    iterator erase(iterator it) {
+        iterator next = it;
+        next++;
+        eraseNode(it.current);
+        return next;
     }
+
+    const_iterator erase(const_iterator it) {
+        iterator temp = iterator(it);
+        iterator next = iterator(it);
+        next++;
+        eraseNode(temp.current);
+        return next;
+    }
+
+    std::pair<iterator, bool> insert(const value_type& value) {
+        return insertNode(value);
+    }
+
+    std::pair<iterator, bool> insert(const Key& key , const Value& value) {
+        return insertNode(std::make_pair(key, value));
+    }
+
+    std::pair<iterator, bool> insert_or_assign(const Key& key , const Value& value) {
+        return insert_or_assignNode(key, value);
+    }
+    
 
     size_t size() const {
         return this->size_;
+    }
+
+    size_t max_size() const {
+        return std::numeric_limits<size_type>::max() / sizeof(value_type);
     }
 
     bool empty() const {
@@ -71,11 +136,11 @@ public:
     }
 
     iterator end() const {
-        return iterator(nullptr);
+        return iterator(nullptr, this->root_);
     }
 
-    const_iterator end() const {
-        return const_iterator(nullptr);
+    const_iterator cend() const {
+        return const_iterator(nullptr, this->root_);
     }
 
     iterator begin() const {
@@ -83,38 +148,22 @@ public:
         while (node && node->left) {
             node = node->left;
         }
-        return iterator(node);
+        return iterator(node, this->root_);
     }
 
-    const_iterator begin() const {
+    const_iterator cbegin() const {
         Node* node = this->root_;
         while (node && node->left) {
             node = node->left;
         }
-        return const_iterator(node);
+        return const_iterator(node, this->root_);
     }
 
-    void print() const {
-        printFancyHelper(root_, "", false, true);
+    void clear() {
+        this->clearTree(this->root_);
+        this->root_ = nullptr;
+        this->size_ = 0;
     }
-
-    void printFancyHelper(Node* node, const std::string& prefix, bool isLeft, bool isRoot) const {
-        if (!node) return;
-
-        if (node->right)
-            printFancyHelper(node->right, prefix + (isRoot ? "    " : (isLeft ? "│   " : "    ")), false, false);
-
-        std::cout << prefix;
-        if (!isRoot)
-            std::cout << (isLeft ? "└── " : "┌── ");
-        std::cout << "(" << node->value.first << "," << node->value.second << ")" << (node->red ? "(R)" : "(B)") << "\n";
-
-        if (node->left)
-            printFancyHelper(node->left, prefix + (isRoot ? "    " : (isLeft ? "    " : "│   ")), true, false);
-    }
-
-
-
 
 private:
     Node* root_;
@@ -160,7 +209,9 @@ private:
                     current->parent->right = nullptr;
                 }
                 parentNode = current->parent;
-            } 
+            } else {
+                this->root_ = nullptr;
+            }
             delete current;
             if (!isEraseNodeRed) {
                 rebalanceAfterErase(replacementNode, parentNode);
@@ -205,11 +256,23 @@ private:
                 temp = temp->left;
             }
             if (temp->parent == current) {
-                current->right = temp->right;
-                if (temp->right) {
-                    temp->right->parent = current;
+                temp->parent = current->parent;
+                if (!current->parent) {
+                    this->root_ = temp;
+                } else if (current == current->parent->left) {
+                    current->parent->left = temp;
+                } else {
+                    current->parent->right = temp;
                 }
-                parentNode = current;
+                temp->left = current->left;
+                if (temp->left) {
+                    temp->left->parent = temp;
+                }
+                // current->right = temp->right;
+                // if (temp->right) {
+                //     temp->right->parent = current;
+                // }
+                parentNode = temp;
                 replacementNode = temp->right;
             } else {
                 if (temp == temp->parent->left) {
@@ -218,17 +281,31 @@ private:
                     temp->parent->right = temp->right;
                 }
                 if (temp->right) {
-                    replacementNode = temp->right;
                     temp->right->parent = temp->parent;
-                } else {
-                    replacementNode = nullptr;
-                }
+                } 
                 parentNode = temp->parent;
-            }
+                replacementNode = temp->right;
 
-            current->value.second = temp->value.second;
+                temp->parent = current->parent;
+                if (!current->parent) {
+                    this->root_ = temp;
+                } else if (current == current->parent->left) {
+                    current->parent->left = temp;
+                } else {
+                    current->parent->right = temp;
+                }
+
+                temp->left = current->left;
+                temp->right = current->right;
+                if (temp->left) {
+                    temp->left->parent = temp;
+                }
+                if (temp->right) {
+                    temp->right->parent = temp;
+                }
+            }
             isEraseNodeRed = temp->red;
-            delete temp;
+            delete current;
             if (!isEraseNodeRed) {
                 rebalanceAfterErase(replacementNode, parentNode);
             }
@@ -238,10 +315,39 @@ private:
         }
     }
 
-    template<typename NodePtr>
-    std::pair<NodePtr, bool> insert(const Key& key, const Value& value) {
-        NodePtr current = this->root_;
-        NodePtr parent = nullptr;
+    std::pair<iterator, bool> insertNode(const value_type& value) {
+        Node* current = this->root_;
+        Node* parent = nullptr;
+        
+        while (current != nullptr) {
+            parent = current;
+            if (value.first < current->value.first) {
+                current = current->left;
+            } else if (value.first > current->value.first) {
+                current = current->right;
+            } else {
+                // if key already in the tree - do nothing (std::map)
+                return {iterator(current), false};
+            }
+        }
+
+        Node* newNode = new Node(value, parent);
+        
+        if (parent == nullptr) {
+            this->root_ = newNode;
+        } else if (value.first < parent->value.first) {
+            parent->left = newNode;
+        } else {
+            parent->right = newNode;
+        }
+        rebalanceAfterInsert(newNode);
+        this->size_++;
+        return {iterator(newNode), true};
+    }
+
+    std::pair<iterator, bool> insert_or_assignNode(const Key& key, const Value& value) {
+        Node* current = this->root_;
+        Node* parent = nullptr;
         
         while (current != nullptr) {
             parent = current;
@@ -250,12 +356,13 @@ private:
             } else if (key > current->value.first) {
                 current = current->right;
             } else {
-                // if key already in the tree - do nothing (std::map)
-                return {current, false};
+                // if key already in the tree - change value and return false
+                current->value.second = value;
+                return {iterator(current), false};
             }
         }
 
-        NodePtr newNode = new Node({key, value}, parent);
+        Node* newNode = new Node({key, value}, parent);
         
         if (parent == nullptr) {
             this->root_ = newNode;
@@ -266,7 +373,8 @@ private:
         }
         rebalanceAfterInsert(newNode);
         this->size_++;
-        return {newNode, true};
+        // if we successfully insert node - return true
+        return {iterator(newNode), true};
     }
 
     void rebalanceAfterInsert(Node* current) {
@@ -344,9 +452,6 @@ private:
                 brother->red = true;
                 current = parent;
                 parent = current->parent;
-                // if (current && current->red) {
-                //     current->red = false;
-                // }
                 continue;
             }
 
@@ -448,13 +553,16 @@ private:
 
 public:
     class iterator {
-        Node* current;
     public:
+        Node* current;
+        Node* tree_root;
         iterator() = default;
         
-        iterator(Node* node) : current(node) {}
+        iterator(const const_iterator& it) : current(it.current) {}
 
-        iterator(const Node* node) : current(node) {}
+        iterator(Node* node) : current(node), tree_root(nullptr) {}
+
+        iterator(Node* node, Node* root) : current(node), tree_root(root) {}
 
         iterator(const rbtree& tree) : current(tree.root_) {
             while (current && current->left) {
@@ -493,11 +601,11 @@ public:
         }
 
         bool operator==(const iterator& other) const {
-            return (this->current == other->current);
+            return (this->current == other.current);
         }
 
         bool operator!=(const iterator& other) const {
-            return (this->current != other->current);
+            return (this->current != other.current);
         }
 
     private:
@@ -523,6 +631,13 @@ public:
 
         void prev() {
             if (!current) {
+                if (!tree_root) {
+                    return;
+                }
+                current = tree_root;
+                while (current && current->right) {
+                    current = current->right;
+                }
                 return;
             }
             if (current->left) {
@@ -543,10 +658,15 @@ public:
     };
 
     class const_iterator {
-        Node* current;
     public:
+        Node* current;
+        Node* tree_root;
         const_iterator() = default;
-        
+
+        const_iterator(const iterator& it) : current(it.current), tree_root(it.tree_root) {}
+
+        const_iterator(Node* node, Node* root) : current(node), tree_root(root) {}
+
         const_iterator(const rbtree& tree) : current(tree.root_) {
             while (current && current->left) {
                 current = current->left;
@@ -584,11 +704,11 @@ public:
         }
 
         bool operator==(const const_iterator& other) const {
-            return (this->current == other->current);
+            return (this->current == other.current);
         }
 
         bool operator!=(const const_iterator& other) const {
-            return (this->current != other->current);
+            return (this->current != other.current);
         }
 
     private:
@@ -614,6 +734,13 @@ public:
 
         void prev() {
             if (!current) {
+                if (!tree_root) {
+                    return;
+                }
+                current = tree_root;
+                while (current && current->right) {
+                    current = current->right;
+                }
                 return;
             }
             if (current->left) {
