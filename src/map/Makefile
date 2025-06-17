@@ -17,3 +17,13 @@ coverage_html: test
 
 clean:
 	rm -f *.o *.gcno *.gcda *.gcov *.out $(OUT) coverage_report.html coverage*.*
+
+clang_format: clean
+	cp ../../materials/linters/.clang-format .clang-format
+	clang-format -i *.cpp *.h
+	rm -f .clang-format
+
+check_format:
+	cp ../../materials/linters/.clang-format .clang-format
+	clang-format -n *.cpp *.h
+	rm -f .clang-format
