@@ -4,14 +4,16 @@ CXXFLAGS = -std=c++20 -Wall -Wextra -fprofile-arcs -ftest-coverage -lgtest -fpro
 SRC = test_map.cpp
 OUT = test
 
-all: test coverage_html
+all: clean coverage_html
 
 test:
 	$(CXX) $(CXXFLAGS) $(SRC) -o $(OUT)
 	./$(OUT)
 
 coverage_html: test
-	gcovr -r . --html --html-details -o coverage_report.html
+	gcovr -r . \
+		--exclude 'rb_tree.h' \
+		--html --html-details -o coverage_report.html
 	open coverage_report.html
 	
 

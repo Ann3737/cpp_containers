@@ -3,7 +3,6 @@
 
 #include <cstddef>
 #include <initializer_list>
-#include <iostream>
 #include <stdexcept>
 
 #include "rb_tree.h"

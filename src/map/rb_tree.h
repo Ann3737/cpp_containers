@@ -1,14 +1,8 @@
 #ifndef __RB_TREE_H__
 #define __RB_TREE_H__
 
-#include <cmath>
-#include <iomanip>
-#include <iostream>
-#include <memory>
-#include <sstream>
-#include <string>
+#include <cstddef>
 #include <utility>
-#include <vector>
 
 template <typename Key, typename Value>
 class rbtree {
@@ -261,10 +255,6 @@ class rbtree {
         if (temp->left) {
           temp->left->parent = temp;
         }
-        // current->right = temp->right;
-        // if (temp->right) {
-        //     temp->right->parent = current;
-        // }
         parentNode = temp;
         replacementNode = temp->right;
       } else {
@@ -280,6 +270,7 @@ class rbtree {
         replacementNode = temp->right;
 
         temp->parent = current->parent;
+
         if (!current->parent) {
           this->root_ = temp;
         } else if (current == current->parent->left) {
@@ -297,8 +288,9 @@ class rbtree {
           temp->right->parent = temp;
         }
       }
-      isEraseNodeRed = temp->red;
+      isEraseNodeRed = current->red;
       delete current;
+
       if (!isEraseNodeRed) {
         rebalanceAfterErase(replacementNode, parentNode);
       }
@@ -426,6 +418,15 @@ class rbtree {
 
       Node* brother = (current == parent->right) ? parent->left : parent->right;
 
+      if (!brother) {
+        if (current == nullptr || current == root_ || parent == nullptr) {
+          if (parent->parent) {
+            parent->parent->red = false;
+            break;
+          }
+        }
+      }
+
       // Case 1: brother is red
       if (brother && brother->red) {
         brother->red = false;
@@ -436,6 +437,9 @@ class rbtree {
           rotateRight(parent);
         }
         brother = (current == parent->right) ? parent->left : parent->right;
+        if (current == nullptr || current == root_ || parent == nullptr) {
+          break;
+        }
       }
 
       // Case 2: brother and his children are black

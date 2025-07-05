@@ -2,12 +2,27 @@
 
 #include <map>
 #include <string>
-#include <utility>
+#include <vector>
 
 #include "rb_tree.h"
 #include "s21_map.h"
 
 using s21::map;
+
+TEST(RBTreeTest, NewTree) {
+  rbtree<int, std::string> tree;
+  tree.insert({10, "ten"});
+  tree.insert({5, "five"});
+  tree.insert({15, "fifteen"});
+  tree.insert({1, "one"});
+  tree.insert({6, "six"});
+  tree.insert({12, "twelve"});
+  tree.insert({17, "seventeen"});
+  tree.insert({0, "null"});
+  auto it = tree.find(15);
+  tree.erase(it);
+  ASSERT_NE(it, tree.cend());
+}
 
 TEST(RBTreeTest, EmptyTree) {
   rbtree<int, std::string> tree;
@@ -293,11 +308,9 @@ TEST(RBTreeTest, EraseNodeWithTwoChildren_SuccessorIsDeeper) {
   tree.insert({10, "left"});
   tree.insert({30, "right"});
   tree.insert({25, "right_left"});
-
   auto it = tree.find(20);
   ASSERT_NE(it, tree.cend());
   tree.erase(it);
-
   EXPECT_EQ(tree.find(25)->first, 25);
   EXPECT_EQ(tree.find(20), tree.cend());
 }
@@ -468,6 +481,221 @@ TEST(MapTest, ContainsMethod) {
   map<int, std::string> m{{1, "a"}};
   EXPECT_TRUE(m.contains(1));
   EXPECT_FALSE(m.contains(2));
+}
+
+TEST(MapTest, DestructorTriggersClear) {
+  map<int, std::string> local_map{{1, "a"}, {2, "b"}};
+  EXPECT_EQ(local_map.size(), 2);
+}
+
+TEST(MapTest, BracketOperatorGetExistingKey) {
+  map<int, std::string> s21_map{{1, "a"}};
+  EXPECT_EQ(s21_map[1], "a");
+}
+
+TEST(MapTest, ClearMethod) {
+  map<int, std::string> s21_map{{1, "a"}, {2, "b"}};
+  s21_map.clear();
+  EXPECT_TRUE(s21_map.empty());
+}
+
+TEST(MapTest, BeginAndEnd) {
+  map<int, std::string> s21_map{{1, "a"}, {2, "b"}};
+  auto it = s21_map.begin();
+  EXPECT_EQ(it->first, 1);
+  ++it;
+  EXPECT_EQ(it->first, 2);
+  ++it;
+  EXPECT_EQ(it, s21_map.end());
+}
+
+TEST(MapTest, ConstAtMethod) {
+  const map<int, std::string> m{{1, "a"}};
+  EXPECT_EQ(m.at(1), "a");
+  EXPECT_THROW(m.at(2), std::out_of_range);
+}
+
+TEST(MapTest, ConstIteration) {
+  const map<int, std::string> m{{1, "a"}, {2, "b"}};
+  auto it = m.cbegin();
+  EXPECT_EQ(it->first, 1);
+  ++it;
+  EXPECT_EQ(it->first, 2);
+  ++it;
+  EXPECT_EQ(it, m.cend());
+}
+
+TEST(MapTest, ConstFindMethod) {
+  const map<int, std::string> m{{1, "a"}};
+  EXPECT_NE(m.find(1), m.end());
+  EXPECT_EQ(m.find(2), m.end());
+}
+
+TEST(MapTest, MaxSize) {
+  map<int, std::string> m;
+  std::map<int, std::string> std_m;
+  EXPECT_GT(m.max_size(), 0u);
+  EXPECT_GE(m.max_size(), std_m.max_size());
+}
+
+TEST(MapTest, InsertByKeyAndValue) {
+  map<int, std::string> m;
+  auto [it, inserted] = m.insert(1, "a");
+  EXPECT_TRUE(inserted);
+  EXPECT_EQ(it->second, "a");
+}
+
+TEST(MapTest, EraseConstIterator) {
+  map<int, std::string> m{{1, "a"}, {2, "b"}};
+  auto it = m.find(1);
+  const map<int, std::string>::const_iterator cit = it;
+  auto next = m.erase(cit);
+  EXPECT_EQ(m.find(1), m.end());
+  EXPECT_EQ(next->first, 2);
+}
+
+TEST(MapTest, BracketOperatorExistingKey) {
+  map<int, std::string> m;
+  m[1] = "hello";
+  m[1];
+  EXPECT_EQ(m[1], "hello");
+}
+
+TEST(MapTest, MaxSizeIsPositive) {
+  map<int, std::string> m;
+  EXPECT_GT(m.max_size(), 0u);
+}
+
+TEST(MapTest, InitListWithDuplicateKeys) {
+  map<int, std::string> m{{1, "a"}, {1, "b"}, {2, "c"}};
+  EXPECT_EQ(m.size(), 2);
+  EXPECT_EQ(m.at(1), "a");
+  EXPECT_EQ(m.at(2), "c");
+}
+
+TEST(MapTest, DestructorCoversClearBranch) {
+  map<int, std::string>* m = new map<int, std::string>{{1, "a"}, {2, "b"}};
+  delete m;
+  SUCCEED();
+}
+
+TEST(MapTest, BracketOperatorInsertAndOverwrite) {
+  map<int, std::string> m;
+  m[1] = "hello";
+  m[1] = "world";
+  EXPECT_EQ(m[1], "world");
+}
+
+TEST(MapTest, ConstCBeginAndCEnd) {
+  const map<int, std::string> m{{1, "a"}, {2, "b"}};
+  std::vector<int> keys;
+  for (auto it = m.cbegin(); it != m.cend(); ++it) {
+    keys.push_back(it->first);
+  }
+  EXPECT_EQ(keys, (std::vector<int>{1, 2}));
+}
+
+TEST(MapTest, ConstMaxSize) {
+  const map<int, std::string> m;
+  EXPECT_GT(m.max_size(), 0u);
+}
+
+TEST(MapTest, EraseConstIteratorDirectCall) {
+  map<int, std::string> m{{1, "a"}, {2, "b"}, {3, "c"}};
+  auto it = m.find(2);
+  m.erase(static_cast<map<int, std::string>::const_iterator>(it));
+  EXPECT_EQ(m.find(2), m.end());
+}
+
+TEST(RBTreeTest, DeleteRedLeaf) {
+  rbtree<int, std::string> tree;
+  tree.insert({10, "ten"});
+  tree.insert({5, "five"});
+  tree.insert({15, "fifteen"});
+
+  auto it = tree.find(15);
+  ASSERT_NE(it, tree.cend());
+  tree.erase(it);
+
+  ASSERT_EQ(tree.find(15), tree.cend());
+}
+
+TEST(RBTreeTest, DeleteBlackLeaf) {
+  rbtree<int, std::string> tree;
+  tree.insert({10, "ten"});
+  tree.insert({5, "five"});
+  tree.insert({15, "fifteen"});
+  tree.insert({1, "one"});
+  tree.insert({6, "six"});
+  tree.insert({0, "zero"});
+
+  auto it = tree.find(0);
+  ASSERT_NE(it, tree.cend());
+  tree.erase(it);
+
+  ASSERT_EQ(tree.find(0), tree.cend());
+}
+
+TEST(RBTreeTest, DeleteNodeWithOneRedChild) {
+  rbtree<int, std::string> tree;
+  tree.insert({10, "ten"});
+  tree.insert({5, "five"});
+  tree.insert({1, "one"});
+
+  auto it = tree.find(5);
+  ASSERT_NE(it, tree.cend());
+  tree.erase(it);
+
+  ASSERT_EQ(tree.find(5), tree.cend());
+  ASSERT_NE(tree.find(1), tree.cend());
+}
+
+TEST(RBTreeTest, DeleteNodeWithTwoChildren) {
+  rbtree<int, std::string> tree;
+  tree.insert({20, "twenty"});
+  tree.insert({10, "ten"});
+  tree.insert({30, "thirty"});
+  tree.insert({25, "twenty-five"});
+  tree.insert({35, "thirty-five"});
+
+  auto it = tree.find(30);
+  ASSERT_NE(it, tree.cend());
+  tree.erase(it);
+
+  ASSERT_EQ(tree.find(30), tree.cend());
+  ASSERT_NE(tree.find(25), tree.cend());
+  ASSERT_NE(tree.find(35), tree.cend());
+}
+
+TEST(RBTreeTest, DeleteRootNode) {
+  rbtree<int, std::string> tree;
+  tree.insert({10, "ten"});
+  tree.insert({5, "five"});
+  tree.insert({15, "fifteen"});
+
+  auto it = tree.find(10);
+  ASSERT_NE(it, tree.cend());
+  tree.erase(it);
+
+  ASSERT_EQ(tree.find(10), tree.cend());
+  ASSERT_NE(tree.find(5), tree.cend());
+  ASSERT_NE(tree.find(15), tree.cend());
+}
+
+TEST(RBTreeTest, SequentialDeletions) {
+  rbtree<int, std::string> tree;
+  std::vector<int> values = {10, 5, 15, 1, 6, 12, 17, 0};
+  for (int v : values) {
+    tree.insert({v, std::to_string(v)});
+  }
+  for (int v : values) {
+    auto it = tree.find(v);
+    ASSERT_NE(it, tree.cend());
+    tree.erase(it);
+    ASSERT_EQ(tree.find(v), tree.cend());
+  }
+
+  ASSERT_EQ(tree.begin(), tree.end());
 }
 
 int main(int argc, char** argv) {
