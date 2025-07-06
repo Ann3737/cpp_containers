@@ -7,15 +7,11 @@ namespace s21 {
 template<typename T, typename Container = s21::vector<T>>
 class queue {
 public:
-
-    // Переопределения типов
     using value_type = T;
     using container_type = Container;
     using reference = typename container_type::reference;
     using const_reference = typename container_type::const_reference;
     using size_type = typename container_type::size_type;
-
-    // *-----КОНСТРУКТОРЫ И ДЕСТРУКТОР-----*
 
     // Конструктор по умолчанию
     queue() = default;
@@ -30,7 +26,6 @@ public:
     // Конструктор перемещения
     queue(queue &&q) = default;
 
-    // Деструктор
     ~queue() = default;
 
     // Оператор копирования
