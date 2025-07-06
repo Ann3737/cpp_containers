@@ -20,8 +20,6 @@ class map {
   using const_iterator = typename rbtree<Key, T>::const_iterator;
   using size_type = size_t;
 
-  // *-----КОНСТРУКТОРЫ И ДЕСТРУКТОР-----*
-
   // Конструктор по умолчанию
   map() = default;
 
@@ -38,7 +36,6 @@ class map {
   // Конструктор перемещения
   map(map&& m) noexcept : tree_(std::move(m.tree_)) {}
 
-  // Деструктор
   ~map() { tree_.clear(); }
 
   // Оператор копирования
@@ -175,6 +172,6 @@ class map {
  private:
   rbtree<key_type, mapped_type> tree_;
 };
-}  // namespace s21
+}
 
 #endif
