@@ -42,6 +42,11 @@ class Stack {
 
   void swap(Stack& other) { c_.swap(other.c_); }
 
+  template <typename... Args>
+  void insert_many_back(Args&&... args) {
+    c_.insert_many_back(std::forward<Args>(args)...);
+  }
+
  private:
   Container c_;
 };

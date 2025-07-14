@@ -5,7 +5,7 @@
 #include <stdexcept>  // для std::out_of_range
 #include <string>     // для std::string
 #include <utility>    // для std::pair
-
+#include <vector>
 namespace s21 {
 
 template <typename T>
@@ -916,6 +916,17 @@ class set {
       copyTree(other.root_);
     }
     return *this;
+  }
+
+  template <typename... Args>
+  std::vector<std::pair<iterator, bool>> insert_many(Args&&... args){
+    static_assert((std::is_convertible_v<Args, T> && ...),
+              "insert_many: все аргументы должны быть типа T или приводимы к нему");
+    static_assert(sizeof...(args) > 0,
+                "insert_many: должен быть хотя бы один аргумент");
+    std::vector<std::pair<iterator, bool>> results;
+    (results.emplace_back(this->insert(std::forward<Args>(args))), ...);
+    return results;
   }
 };
 

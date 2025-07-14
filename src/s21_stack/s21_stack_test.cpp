@@ -4,6 +4,22 @@
 
 using namespace s21;
 
+TEST(StackTest, InsertManyBack) {
+  s21::Stack<int> stack;
+  stack.insert_many_back(1, 2, 3);  // ← должно вставиться: 1 (дно), 2, 3 (top)
+
+  // Элементы в стеке хранятся в порядке: top() == 3, затем 2, затем 1
+  std::vector<int> expected = {3, 2, 1};
+  for (int val : expected) {
+    ASSERT_FALSE(stack.empty());
+    EXPECT_EQ(stack.top(), val);
+    stack.pop();
+  }
+
+  EXPECT_TRUE(stack.empty());  // после всех pop стек должен быть пуст
+}
+
+
 TEST(StackTest, DefaultConstructor) {
   Stack<int> s;
   EXPECT_TRUE(s.empty());

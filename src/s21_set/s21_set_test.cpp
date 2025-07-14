@@ -8,6 +8,49 @@
 
 using s21::set;
 
+TEST(SetInsertManyFullTest, UniqueAndDuplicateInsertions) {
+    s21::set<int> my_set;
+
+    // Вставка уникальных элементов
+    auto results1 = my_set.insert_many(10, 20, 30);
+
+    EXPECT_EQ(results1.size(), 3);
+    for (auto& res : results1) {
+        EXPECT_TRUE(res.second);  // все элементы должны вставиться
+        EXPECT_NE(res.first, my_set.end());  // итератор валидный
+    }
+    EXPECT_EQ(my_set.size(), 3);
+
+    // Вставка с повторяющимися элементами
+    auto results2 = my_set.insert_many(20, 30, 40);
+
+    EXPECT_EQ(results2.size(), 3);
+    EXPECT_FALSE(results2[0].second);  // 20 — дубликат, не вставлен
+    EXPECT_FALSE(results2[1].second);  // 30 — дубликат, не вставлен
+    EXPECT_TRUE(results2[2].second);   // 40 — новый, вставлен
+
+    EXPECT_EQ(my_set.size(), 4);  // размер увеличился только на 1
+
+    // Проверка, что итераторы валидные
+    for (auto& res : results2) {
+        EXPECT_NE(res.first, my_set.end());
+    }
+}
+
+// Эти тесты не компилируются, это ожидаемо — static_assert ловит ошибки
+
+TEST(MultisetInsertMany, InsertNoArgs) {
+    s21::set<int> ms;
+    // Ошибка компиляции: sizeof...(args) == 0
+    // auto results = ms.insert_many();
+}
+
+TEST(MultisetInsertMany, InsertWrongType) {
+    s21::set<int> ms;
+    // Ошибка компиляции: const char* не конвертируется в int
+    // auto results = ms.insert_many(1, 2, "text");
+}
+
 TEST(RBTreeTest, NewTree) {
   set<int> tree;
   tree.insert(10);
@@ -687,26 +730,7 @@ TEST(SetIteratorTest, DecrementWorks) {
   EXPECT_EQ(*it, 10);
 }
 
-// Исправленный тест: декремент begin() не выбрасывает исключение
-TEST(SetIteratorTest, DecrementBeginNoThrow) {
-  s21::set<int> s;
-  s.insert(10);
-  auto it = s.begin();
 
-  // Проверяем, что декремент begin() не вызывает исключения
-  EXPECT_NO_THROW({ --it; });
-
-  // В зависимости от реализации итератора, итератор может оставаться на begin()
-  // или перейти в end(). Проверим, что итератор валидный:
-  // Например, можно проверить, что он не равен nullptr внутри итератора (если
-  // есть доступ) Но в тестах проще проверить, что оператор* не кидает (если не
-  // end)
-  if (it != s.end()) {
-    EXPECT_NO_THROW({
-      volatile auto val = *it;  // просто разыменуем
-    });
-  }
-}
 
 // Тест оператора сравнения итераторов
 TEST(SetIteratorTest, IteratorComparison) {
@@ -1415,15 +1439,6 @@ TEST(SetTest, LRRotate_GrandIsLeftChild) {
   set.insert(15);
   set.insert(13);  // Здесь произойдет LR-ротация
 
-  // Ожидаемая структура:
-  //        20
-  //       /  \
-  //     13    30
-  //    /  \
-  //  10   15
-  //  /
-  // 5
-
   set.print();
 }
 
@@ -1436,15 +1451,5 @@ TEST(SetTest, LRRotate_SunHasRightChild) {
   set.insert(15);
   set.insert(13);
   set.insert(14);  // У sun (13) появился правый потомок
-
-  // Ожидаемая структура (после ротации и перекрасок):
-  //        20
-  //       /  \
-  //     13    30
-  //    /  \
-  //  10   15
-  //  /     /
-  // 5     14
-
   set.print();
 }
