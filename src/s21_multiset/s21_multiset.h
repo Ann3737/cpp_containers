@@ -1040,11 +1040,3 @@ class multiset {
   
 };
 }
-/*
-int main(){
-  s21::multiset<int> set;
-  set.insert_many("text");
-  set.print();
-  return 0;
-}
-*/
