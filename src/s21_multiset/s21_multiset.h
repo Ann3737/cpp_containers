@@ -5,7 +5,7 @@
 #include <stdexcept>  // для std::out_of_range
 #include <string>     // для std::string
 #include <utility>    // для std::pair
-#include <vector>  // чтобы использовать std::vector
+#include <vector>     // чтобы использовать std::vector
 
 namespace s21 {
 
@@ -13,7 +13,7 @@ template <typename T>
 class multiset {
  private:
   enum class Color { RED, BLACK };
-  
+
   using value_type = T;
   using reference = T&;
   using const_reference = const T&;
@@ -55,7 +55,7 @@ class multiset {
 
     return current;
   }
-  
+
   void printTree(Node* node, std::string prefix = "",
                  bool isLeft = true) const {
     std::cout << prefix;
@@ -78,7 +78,6 @@ class multiset {
     printTree(node->left_, prefix + (isLeft ? "│   " : "    "), true);
     printTree(node->right_, prefix + (isLeft ? "│   " : "    "), false);
   }
-  
 
   void copyTree(Node* node) {
     if (node) {
@@ -296,8 +295,7 @@ class multiset {
       clearTree(tree->right_);
       delete tree;
     }
-  }  
-
+  }
 
   void rotateLeft(Node*& n) {
     if (!n || !n->right_) {
@@ -344,17 +342,16 @@ class multiset {
     leftChild->right_ = n;
     n->parent_ = leftChild;
   }
-  
-
 
  public:
-
   /*---- Конструкторы -----*/
   multiset() : root_(nullptr), size_(0) {}
 
   multiset(const T& value) : root_(nullptr), size_(0) { insert(value); }
 
-  multiset(const multiset& other) : root_(nullptr), size_(0) { copyTree(other.root_); }
+  multiset(const multiset& other) : root_(nullptr), size_(0) {
+    copyTree(other.root_);
+  }
 
   multiset(multiset&& other) noexcept : root_(other.root_), size_(other.size_) {
     other.root_ = nullptr;
@@ -394,10 +391,6 @@ class multiset {
     }
     return *this;
   }
-    
-  
-
-
 
   void clear() {
     clearTree(root_);
@@ -671,12 +664,11 @@ class multiset {
     for (auto it = other.begin(); it != other.end();) {
       auto next = it;
       ++next;
-      insert(*it);        // просто вставляем
-      other.erase(it);    // удаляем из other
+      insert(*it);      // просто вставляем
+      other.erase(it);  // удаляем из other
       it = next;
     }
   }
-
 
   void rebalanceAfterErase(Node*& current, Node*& Parent) {
     while (current != root_ && (!current || current->color_ == Color::BLACK)) {
@@ -769,13 +761,13 @@ class multiset {
       current->color_ = Color::BLACK;
     }
   }
-  
-  iterator erase(iterator pos){
+
+  iterator erase(iterator pos) {
     if (pos == end()) return end();  // безопасно
     auto next_it = pos;
     ++next_it;
     remove(pos);
-   
+
     return next_it;
   }
 
@@ -783,7 +775,8 @@ class multiset {
     auto range = equal_range(value);
     size_type count = 0;
     for (auto it = range.first; it != range.second;) {
-      it = erase(it);  // используем erase(iterator), чтобы удалить по одному элементу и получить следующий итератор
+      it = erase(it);  // используем erase(iterator), чтобы удалить по одному
+                       // элементу и получить следующий итератор
       ++count;
     }
     return count;
@@ -923,34 +916,34 @@ class multiset {
     Node* result = nullptr;
 
     while (current != nullptr) {
-        if (current->data_ < x) {
-            current = current->right_;
-        } else {
-            result = current;
-            current = current->left_;
-        }
+      if (current->data_ < x) {
+        current = current->right_;
+      } else {
+        result = current;
+        current = current->left_;
+      }
     }
 
     return result ? iterator(result) : end();
   }
 
-  const_iterator lower_bound(const T& x) const{
+  const_iterator lower_bound(const T& x) const {
     Node* current = root_;
     Node* result = nullptr;
 
     while (current != nullptr) {
-        if (current->data_ < x) {
-            current = current->right_;
-        } else {
-            result = current;
-            current = current->left_;
-        }
+      if (current->data_ < x) {
+        current = current->right_;
+      } else {
+        result = current;
+        current = current->left_;
+      }
     }
 
     return const_iterator(result);
   }
 
- iterator upper_bound(const T& x) {
+  iterator upper_bound(const T& x) {
     Node* current = root_;
     Node* result = nullptr;
 
@@ -963,37 +956,36 @@ class multiset {
       }
     }
 
-    if (result == nullptr){
+    if (result == nullptr) {
       return end();
     }
-      
 
     return iterator(result);
   }
-  const_iterator upper_bound(const T& x) const{
+  const_iterator upper_bound(const T& x) const {
     Node* current = root_;
     Node* result = nullptr;
 
     while (current != nullptr) {
-        if (current->data_ <= x) {
-            current = current->right_;
-        } else {
-            result = current;
-            current = current->left_;
-        }
+      if (current->data_ <= x) {
+        current = current->right_;
+      } else {
+        result = current;
+        current = current->left_;
+      }
     }
 
     return const_iterator(result);
   }
-  
+
   std::pair<iterator, iterator> equal_range(const T& x) {
     return {lower_bound(x), upper_bound(x)};
   }
 
-  std::pair<const_iterator, const_iterator> equal_range(const T& x) const{
+  std::pair<const_iterator, const_iterator> equal_range(const T& x) const {
     return {lower_bound(x), upper_bound(x)};
   }
-  
+
   size_type count(const T& value) const {
     auto range = equal_range(value);
     size_type cnt = 0;
@@ -1004,15 +996,15 @@ class multiset {
   }
 
   template <typename... Args>
-  std::vector<std::pair<iterator, bool>> insert_many(Args&&... args){
-    static_assert((std::is_convertible_v<Args, T> && ...),
-              "insert_many: все аргументы должны быть типа T или приводимы к нему");
+  std::vector<std::pair<iterator, bool>> insert_many(Args&&... args) {
+    static_assert(
+        (std::is_convertible_v<Args, T> && ...),
+        "insert_many: все аргументы должны быть типа T или приводимы к нему");
     static_assert(sizeof...(args) > 0,
-                "insert_many: должен быть хотя бы один аргумент");
+                  "insert_many: должен быть хотя бы один аргумент");
     std::vector<std::pair<iterator, bool>> results;
     (results.emplace_back(this->insert(std::forward<Args>(args)), true), ...);
     return results;
   }
-  
 };
-}
+}  // namespace s21

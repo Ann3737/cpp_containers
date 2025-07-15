@@ -59,10 +59,10 @@ class List {
 
   /* конструктор копирования */
   List(const List& other) : List() {  // вызывает конструктор по умолчанию
-    Node* current = other.head_;  // начинаем с головы чужого списка
-    while (current) {            // пока есть элементы
-      push_back(current->data);  // копируем данные
-      current = current->next;   // двигаемся дальше
+    Node* current = other.head_;      // начинаем с головы чужого списка
+    while (current) {                 // пока есть элементы
+      push_back(current->data);       // копируем данные
+      current = current->next;        // двигаемся дальше
     }
   }
 
@@ -121,10 +121,10 @@ class List {
   /*добавление в конец*/
   void push_back(const T& value) {
     Node* newNode = new Node(value);  // выделил новую структуру
-    if (tail_) {  // если последня стуктура не пустая
-      tail_->next = newNode;  // добавли в конец
-      newNode->prev = tail_;  //  добавли что последняя стала предидущей
-      tail_ = newNode;  //  и последняя стала той что мы сделали
+    if (tail_) {                      // если последня стуктура не пустая
+      tail_->next = newNode;          // добавли в конец
+      newNode->prev = tail_;          //  добавли что последняя стала предидущей
+      tail_ = newNode;                //  и последняя стала той что мы сделали
     } else {
       head_ = tail_ = newNode;  // если пустая то создаем голову и хвост
     }
@@ -134,10 +134,10 @@ class List {
   /*удаления с конца*/
   void pop_back() {
     if (tail_) {
-      if (!tail_) return;  // если список пуст — ничего не делаем
-      Node* temp = tail_;  // временная станет хвостом
-      tail_ = tail_->prev;  // хвост становится предыдущем
-      if (tail_) {  // проверка если список из 1 элемента
+      if (!tail_) return;       // если список пуст — ничего не делаем
+      Node* temp = tail_;       // временная станет хвостом
+      tail_ = tail_->prev;      // хвост становится предыдущем
+      if (tail_) {              // проверка если список из 1 элемента
         tail_->next = nullptr;  // обнулил след указатель
       } else {
         head_ = nullptr;  // если 1элемент обнуляем голову
@@ -175,10 +175,10 @@ class List {
   }
   // Метод для печати списка
   void print() {
-    Node* current = head_;  // новый указатель на голову
-    while (current) {  // пока указатель на что то указывает
+    Node* current = head_;                // новый указатель на голову
+    while (current) {                     // пока указатель на что то указывает
       std::cout << current->data << " ";  // принтуем от начала с пробелом
-      current = current->next;  // присваеваем след элемент списка
+      current = current->next;            // присваеваем след элемент списка
     }
     std::cout << std::endl;  // конец строки
   }
@@ -462,8 +462,8 @@ class List {
       Node* insert_pos = pos.current_;  // куда вставляем
       Node* before =
           insert_pos ? insert_pos->prev : tail_;  // что перед вставкой
-      Node* head_other = other.head_;  // начало второго списка
-      Node* tail_other = other.tail_;  // конец второго списка
+      Node* head_other = other.head_;             // начало второго списка
+      Node* tail_other = other.tail_;             // конец второго списка
       if (before) {  // если позиция была в середине вернется на предыдущий если
                      // end() то будет тэйл
         before->next = head_other;  // связываем с головой 2го списка
@@ -505,7 +505,7 @@ class List {
     Node* current = head_;  // начинаем с головы
     while (current && current->next) {
       if (current->data == current->next->data) {  // удаление
-        Node* temp = current->next;  // временная для удалемого
+        Node* temp = current->next;                // временная для удалемого
 
         if (temp->next) {  // если есть следующий
 

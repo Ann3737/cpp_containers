@@ -750,7 +750,7 @@ TEST(ListTest, ReverseThenErase) {
 
   auto it = list.begin();  // указывает на 300
   ++it;                    // теперь указывает на 200
-  list.erase(it);  // удалим 200 → должно остаться: 300 100
+  list.erase(it);          // удалим 200 → должно остаться: 300 100
 
   testing::internal::CaptureStdout();
   list.print();

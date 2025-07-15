@@ -1,6 +1,8 @@
-#include <gtest/gtest.h>
 #include "s21_stack.h"  // <-- твой Stack
-#include "../s21_list/s21_list.h"   // <-- нужный контейнер
+
+#include <gtest/gtest.h>
+
+#include "../s21_list/s21_list.h"  // <-- нужный контейнер
 
 using namespace s21;
 
@@ -18,7 +20,6 @@ TEST(StackTest, InsertManyBack) {
 
   EXPECT_TRUE(stack.empty());  // после всех pop стек должен быть пуст
 }
-
 
 TEST(StackTest, DefaultConstructor) {
   Stack<int> s;

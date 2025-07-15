@@ -9,46 +9,46 @@
 using s21::set;
 
 TEST(SetInsertManyFullTest, UniqueAndDuplicateInsertions) {
-    s21::set<int> my_set;
+  s21::set<int> my_set;
 
-    // Вставка уникальных элементов
-    auto results1 = my_set.insert_many(10, 20, 30);
+  // Вставка уникальных элементов
+  auto results1 = my_set.insert_many(10, 20, 30);
 
-    EXPECT_EQ(results1.size(), 3);
-    for (auto& res : results1) {
-        EXPECT_TRUE(res.second);  // все элементы должны вставиться
-        EXPECT_NE(res.first, my_set.end());  // итератор валидный
-    }
-    EXPECT_EQ(my_set.size(), 3);
+  EXPECT_EQ(results1.size(), 3);
+  for (auto& res : results1) {
+    EXPECT_TRUE(res.second);             // все элементы должны вставиться
+    EXPECT_NE(res.first, my_set.end());  // итератор валидный
+  }
+  EXPECT_EQ(my_set.size(), 3);
 
-    // Вставка с повторяющимися элементами
-    auto results2 = my_set.insert_many(20, 30, 40);
+  // Вставка с повторяющимися элементами
+  auto results2 = my_set.insert_many(20, 30, 40);
 
-    EXPECT_EQ(results2.size(), 3);
-    EXPECT_FALSE(results2[0].second);  // 20 — дубликат, не вставлен
-    EXPECT_FALSE(results2[1].second);  // 30 — дубликат, не вставлен
-    EXPECT_TRUE(results2[2].second);   // 40 — новый, вставлен
+  EXPECT_EQ(results2.size(), 3);
+  EXPECT_FALSE(results2[0].second);  // 20 — дубликат, не вставлен
+  EXPECT_FALSE(results2[1].second);  // 30 — дубликат, не вставлен
+  EXPECT_TRUE(results2[2].second);   // 40 — новый, вставлен
 
-    EXPECT_EQ(my_set.size(), 4);  // размер увеличился только на 1
+  EXPECT_EQ(my_set.size(), 4);  // размер увеличился только на 1
 
-    // Проверка, что итераторы валидные
-    for (auto& res : results2) {
-        EXPECT_NE(res.first, my_set.end());
-    }
+  // Проверка, что итераторы валидные
+  for (auto& res : results2) {
+    EXPECT_NE(res.first, my_set.end());
+  }
 }
 
 // Эти тесты не компилируются, это ожидаемо — static_assert ловит ошибки
 
 TEST(MultisetInsertMany2, InsertNoArgs) {
-    s21::set<int> ms;
-    // Ошибка компиляции: sizeof...(args) == 0
-    // auto results = ms.insert_many();
+  s21::set<int> ms;
+  // Ошибка компиляции: sizeof...(args) == 0
+  // auto results = ms.insert_many();
 }
 
 TEST(MultisetInsertMany2, InsertWrongType) {
-    s21::set<int> ms;
-    // Ошибка компиляции: const char* не конвертируется в int
-    // auto results = ms.insert_many(1, 2, "text");
+  s21::set<int> ms;
+  // Ошибка компиляции: const char* не конвертируется в int
+  // auto results = ms.insert_many(1, 2, "text");
 }
 
 TEST(RBTreeTest1, NewTree) {
@@ -724,8 +724,6 @@ TEST(SetIteratorTest, DecrementWorks) {
   --it;  // 10
   EXPECT_EQ(*it, 10);
 }
-
-
 
 // Тест оператора сравнения итераторов
 TEST(SetIteratorTest, IteratorComparison) {
