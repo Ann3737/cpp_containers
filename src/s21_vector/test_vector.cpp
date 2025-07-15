@@ -53,6 +53,99 @@ TEST(VectorExceptionTests, InitializerListThrowsDuringConstruction) {
       std::runtime_error);
 }
 
+TEST(VectorExceptionTests, InitializerListThrowsDuringConstruction2) {
+  ThrowOnN::throw_at = 2;
+  ThrowOnN a(0);
+  ThrowOnN b(1);
+
+  auto throwing_lambda = [&]() {
+    s21::vector<ThrowOnN> v = {a, b, ThrowOnN(2)};
+  };
+
+  EXPECT_THROW(throwing_lambda(), std::runtime_error);
+}
+
+TEST(VectorExceptionTests, CopyConstructorThrowsDuringCopy) {
+  CopyThrower::throw_at = -1;
+  s21::vector<CopyThrower> v = {CopyThrower(1), CopyThrower(2), CopyThrower(3)};
+
+  CopyThrower::throw_at = 2;
+  EXPECT_THROW({ s21::vector<CopyThrower> copy(v); }, std::runtime_error);
+}
+
+TEST(S21VectorInsertManyTest, InsertManyMiddle) {
+  s21::vector<int> s21_vec{1, 2, 5};
+  auto it = s21_vec.insert_many(s21_vec.begin() + 2, 3, 4);
+
+  ASSERT_EQ(s21_vec.size(), 5u);
+  EXPECT_EQ(s21_vec[0], 1);
+  EXPECT_EQ(s21_vec[1], 2);
+  EXPECT_EQ(s21_vec[2], 3);
+  EXPECT_EQ(s21_vec[3], 4);
+  EXPECT_EQ(s21_vec[4], 5);
+  EXPECT_EQ(*it, 5);
+}
+
+TEST(S21VectorInsertManyTest, InsertManyFront) {
+  s21::vector<int> s21_vec{3, 4, 5};
+  auto it = s21_vec.insert_many(s21_vec.begin(), 1, 2);
+
+  ASSERT_EQ(s21_vec.size(), 5u);
+  EXPECT_EQ(s21_vec[0], 1);
+  EXPECT_EQ(s21_vec[1], 2);
+  EXPECT_EQ(s21_vec[2], 3);
+  EXPECT_EQ(s21_vec[3], 4);
+  EXPECT_EQ(s21_vec[4], 5);
+  EXPECT_EQ(*it, 3);
+}
+
+TEST(S21VectorInsertManyTest, InsertManyBack) {
+  s21::vector<int> s21_vec{1, 2, 3};
+  auto it = s21_vec.insert_many(s21_vec.end(), 4, 5, 6);
+
+  ASSERT_EQ(s21_vec.size(), 6u);
+  EXPECT_EQ(s21_vec[0], 1);
+  EXPECT_EQ(s21_vec[1], 2);
+  EXPECT_EQ(s21_vec[2], 3);
+  EXPECT_EQ(s21_vec[3], 4);
+  EXPECT_EQ(s21_vec[4], 5);
+  EXPECT_EQ(s21_vec[5], 6);
+  EXPECT_EQ(it, s21_vec.end());
+}
+
+TEST(S21VectorInsertManyBackTest, InsertManyBackWorks) {
+  s21::vector<int> s21_vec{1, 2, 3};
+  s21_vec.insert_many_back(4, 5, 6);
+
+  ASSERT_EQ(s21_vec.size(), 6u);
+  EXPECT_EQ(s21_vec[0], 1);
+  EXPECT_EQ(s21_vec[1], 2);
+  EXPECT_EQ(s21_vec[2], 3);
+  EXPECT_EQ(s21_vec[3], 4);
+  EXPECT_EQ(s21_vec[4], 5);
+  EXPECT_EQ(s21_vec[5], 6);
+}
+
+TEST(S21VectorInsertManyTest, InsertManyEmptyVector) {
+  s21::vector<int> s21_vec;
+  s21_vec.insert_many(s21_vec.begin(), 10, 20, 30);
+
+  ASSERT_EQ(s21_vec.size(), 3u);
+  EXPECT_EQ(s21_vec[0], 10);
+  EXPECT_EQ(s21_vec[1], 20);
+  EXPECT_EQ(s21_vec[2], 30);
+}
+
+TEST(S21VectorInsertManyBackTest, InsertManyBackEmptyVector) {
+  s21::vector<int> s21_vec;
+  s21_vec.insert_many_back(7, 8, 9);
+
+  ASSERT_EQ(s21_vec.size(), 3u);
+  EXPECT_EQ(s21_vec[0], 7);
+  EXPECT_EQ(s21_vec[1], 8);
+  EXPECT_EQ(s21_vec[2], 9);
+}
+
 TEST(VectorBasicTests, ReserveReturnsIfSizeNotGreaterThanCapacity) {
   s21::vector<int> v(5);
   size_t old_capacity = v.capacity();
@@ -269,9 +362,4 @@ TEST(VectorTest, SwapClearShrinkToFit) {
 
   v1.shrink_to_fit();
   EXPECT_EQ(v1.capacity(), v1.size());
-}
-
-int main(int argc, char** argv) {
-  ::testing::InitGoogleTest(&argc, argv);
-  return RUN_ALL_TESTS();
 }

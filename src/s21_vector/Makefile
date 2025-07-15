@@ -15,7 +15,7 @@ coverage_html: test
 	open coverage_report.html
 
 clean:
-	rm -f *.o *.gcno *.gcda $(OUT) coverage_report.html coverage*.*
+	rm -f *.o *.gcno *.gcda *.gcov $(OUT) coverage_report.html coverage*.*
 
 clang_format: clean
 	cp ../../materials/linters/.clang-format .clang-format
