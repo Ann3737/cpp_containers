@@ -92,32 +92,10 @@ class multiset {
     Node* grand = current;
     Node* father = current->right_;
     Node* sun = father->left_;
-
-    /* --- УБРАЛ ЭТУ ПРОВЕРКУ
-    if (grand->parent_) {
-      sun->parent_ = grand->parent_;
-      if (grand->parent_->left_ == grand) {
-        grand->parent_->left_ = sun;
-      } else {
-        grand->parent_->right_ = sun;
-      }
-    } else {
-      sun->parent_ = nullptr;
-      root_ = sun;
-    }
-    */
-    sun->parent_ = nullptr;  // оставил
+    sun->parent_ = nullptr;
     root_ = sun;
 
     grand->parent_ = sun;
-
-    /* УБРАЛ ЭТУ ПРОВЕРКУ
-    if (sun->left_) {
-      grand->right_ = sun->left_;
-      sun->left_->parent_ = grand;
-    } else {
-      grand->right_ = nullptr;
-    }*/
     grand->right_ = nullptr;  // оставил
     sun->left_ = grand;
 
@@ -432,8 +410,6 @@ class multiset {
   }
 
   void print() const { printTree(root_, "", false); }
-
-  void data() { return this->data_; }
 
   /*---- Проверить, пустое ли множество ----*/
   bool empty() const { return this->size_ == 0; }

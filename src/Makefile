@@ -5,6 +5,17 @@ SRC = s21_vector/test_vector.cpp s21_array/test_array.cpp s21_map/test_map.cpp s
 SRC_FILES := $(shell find . -name "*.cpp" -o -name "*.h")
 OUT = test
 
+UNAME = $(shell uname)
+
+# ifeq ($(UNAME), Darwin)
+# OPEN = open
+# endif
+
+# ifeq ($(UNAME), Linux)
+# OPEN = xdg-open
+# GCOV_FLAGS += -lsubunit -lm
+# endif
+
 all: clean test coverage_html
 
 test:
@@ -13,7 +24,7 @@ test:
 
 coverage_html: test
 	gcovr -r . \
-		--exclude map/rb_tree.h \
+		--exclude s21_map/rb_tree.h \
 		--html --html-details -o coverage_report.html
 	open coverage_report.html
 

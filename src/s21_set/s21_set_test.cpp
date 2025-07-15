@@ -39,19 +39,19 @@ TEST(SetInsertManyFullTest, UniqueAndDuplicateInsertions) {
 
 // Эти тесты не компилируются, это ожидаемо — static_assert ловит ошибки
 
-TEST(MultisetInsertMany, InsertNoArgs) {
+TEST(MultisetInsertMany2, InsertNoArgs) {
     s21::set<int> ms;
     // Ошибка компиляции: sizeof...(args) == 0
     // auto results = ms.insert_many();
 }
 
-TEST(MultisetInsertMany, InsertWrongType) {
+TEST(MultisetInsertMany2, InsertWrongType) {
     s21::set<int> ms;
     // Ошибка компиляции: const char* не конвертируется в int
     // auto results = ms.insert_many(1, 2, "text");
 }
 
-TEST(RBTreeTest, NewTree) {
+TEST(RBTreeTest1, NewTree) {
   set<int> tree;
   tree.insert(10);
   tree.insert(5);
@@ -66,7 +66,7 @@ TEST(RBTreeTest, NewTree) {
   ASSERT_NE(it, tree.end());
 }
 
-TEST(RBTreeTest, EraseElementReturnsNextIterator1) {
+TEST(RBTreeTest1, EraseElementReturnsNextIterator1) {
   set<int> tree;
   tree.insert(1);
   tree.insert(2);
@@ -77,7 +77,7 @@ TEST(RBTreeTest, EraseElementReturnsNextIterator1) {
   ASSERT_NE(next, tree.end());
 }
 
-TEST(RBTreeTest, EraseLastElementReturnsEnd1) {
+TEST(RBTreeTest1, EraseLastElementReturnsEnd1) {
   set<int> tree;
   tree.insert(1);
   auto it = tree.find(1);
@@ -86,7 +86,7 @@ TEST(RBTreeTest, EraseLastElementReturnsEnd1) {
   EXPECT_EQ(next, tree.end());
 }
 
-TEST(RBTreeTest, EraseLeafNode1) {
+TEST(RBTreeTest1, EraseLeafNode1) {
   set<int> tree;
   tree.insert(10);
   tree.insert(5);
@@ -96,7 +96,7 @@ TEST(RBTreeTest, EraseLeafNode1) {
   EXPECT_EQ(it, tree.end());
 }
 
-TEST(RBTreeTest, EraseNodeWithOneChild1) {
+TEST(RBTreeTest1, EraseNodeWithOneChild1) {
   set<int> tree;
   tree.insert(10);
   tree.insert(5);
@@ -108,7 +108,7 @@ TEST(RBTreeTest, EraseNodeWithOneChild1) {
   EXPECT_EQ(iter, tree.end());
 }
 
-TEST(RBTreeTest, EraseNodeWithTwoChild1) {
+TEST(RBTreeTest1, EraseNodeWithTwoChild1) {
   set<int> tree;
   tree.insert(10);
   tree.insert(5);
@@ -119,7 +119,7 @@ TEST(RBTreeTest, EraseNodeWithTwoChild1) {
   EXPECT_EQ(iter, tree.end());
 }
 
-TEST(RBTreeTest, EraseNodeWithTwoChildren1) {
+TEST(RBTreeTest1, EraseNodeWithTwoChildren1) {
   set<int> tree;
   tree.insert(10);
   tree.insert(5);
@@ -132,7 +132,7 @@ TEST(RBTreeTest, EraseNodeWithTwoChildren1) {
   EXPECT_EQ(it, tree.end());
 }
 
-TEST(RBTreeTest, EraseRootNode1) {
+TEST(RBTreeTest1, EraseRootNode1) {
   set<int> tree;
   tree.insert(10);
   tree.erase(tree.find(10));
@@ -140,7 +140,7 @@ TEST(RBTreeTest, EraseRootNode1) {
   EXPECT_EQ(it, tree.end());
 }
 
-TEST(RBTreeTest, EraseSingleElement) {
+TEST(RBTreeTest1, EraseSingleElement) {
   set<int> tree;
   auto it = tree.insert(42).first;
   EXPECT_EQ(tree.size(), 1);
@@ -151,7 +151,7 @@ TEST(RBTreeTest, EraseSingleElement) {
   EXPECT_EQ(it, tree.end());
 }
 
-TEST(RBTreeTest, EraseRootWithTwoChildren) {
+TEST(RBTreeTest1, EraseRootWithTwoChildren) {
   set<int> tree;
   tree.insert(10);
   tree.insert(5);
@@ -163,7 +163,7 @@ TEST(RBTreeTest, EraseRootWithTwoChildren) {
   EXPECT_EQ(it, tree.end());
 }
 
-TEST(RBTreeTest, EraseLeaf) {
+TEST(RBTreeTest1, EraseLeaf) {
   set<int> tree;
   tree.insert(10);
   tree.insert(5);
@@ -173,7 +173,7 @@ TEST(RBTreeTest, EraseLeaf) {
   EXPECT_EQ(tree.size(), 1);
 }
 
-TEST(RBTreeTest, EraseNodeWithOneChild) {
+TEST(RBTreeTest1, EraseNodeWithOneChild) {
   set<int> tree;
   tree.insert(10);
   tree.insert(5);
@@ -183,7 +183,7 @@ TEST(RBTreeTest, EraseNodeWithOneChild) {
   EXPECT_EQ(it, tree.end());
 }
 
-TEST(RBTreeTest, EraseNodeWithTwoChildren_SuccessorIsRightChild) {
+TEST(RBTreeTest1, EraseNodeWithTwoChildren_SuccessorIsRightChild) {
   set<int> tree;
   tree.insert(20);
   tree.insert(10);
@@ -200,7 +200,7 @@ TEST(RBTreeTest, EraseNodeWithTwoChildren_SuccessorIsRightChild) {
   EXPECT_EQ(it, tree.end());
 }
 
-TEST(RBTreeTest, EraseNodeWithTwoChildren_SuccessorIsDeeper) {
+TEST(RBTreeTest1, EraseNodeWithTwoChildren_SuccessorIsDeeper) {
   set<int> tree;
   tree.insert(20);
   tree.insert(10);
@@ -225,7 +225,7 @@ TEST(RBTreeTest, EraseNodeWithTwoChildren_SuccessorIsDeeper) {
   EXPECT_NE(it, tree.end());
 }
 
-TEST(RBTreeTest, EraseNodeWithTwoChildren_SuccessorWithAndWithoutRightChild) {
+TEST(RBTreeTest1, EraseNodeWithTwoChildren_SuccessorWithAndWithoutRightChild) {
   set<int> tree;
   tree.insert(20);
   tree.insert(10);
@@ -253,7 +253,7 @@ TEST(RBTreeTest, EraseNodeWithTwoChildren_SuccessorWithAndWithoutRightChild) {
   EXPECT_EQ(*it2, 27);
 }
 
-TEST(RBTreeTest, DeleteRedLeaf) {
+TEST(RBTreeTest1, DeleteRedLeaf) {
   set<int> tree;
   tree.insert(10);
   tree.insert(5);
@@ -266,7 +266,7 @@ TEST(RBTreeTest, DeleteRedLeaf) {
   ASSERT_EQ(it, tree.end());
 }
 
-TEST(RBTreeTest, DeleteBlackLeaf) {
+TEST(RBTreeTest1, DeleteBlackLeaf) {
   set<int> tree;
   tree.insert(10);
   tree.insert(5);
@@ -282,7 +282,7 @@ TEST(RBTreeTest, DeleteBlackLeaf) {
   ASSERT_EQ(it, tree.end());
 }
 
-TEST(RBTreeTest, DeleteNodeWithOneRedChild) {
+TEST(RBTreeTest1, DeleteNodeWithOneRedChild) {
   set<int> tree;
   tree.insert(10);
   tree.insert(5);
@@ -297,7 +297,7 @@ TEST(RBTreeTest, DeleteNodeWithOneRedChild) {
   ASSERT_NE(it2, tree.end());
 }
 
-TEST(RBTreeTest, DeleteNodeWithTwoChildren) {
+TEST(RBTreeTest1, DeleteNodeWithTwoChildren) {
   set<int> tree;
   tree.insert(20);
   tree.insert(10);
@@ -316,7 +316,7 @@ TEST(RBTreeTest, DeleteNodeWithTwoChildren) {
   ASSERT_NE(it3, tree.end());
 }
 
-TEST(RBTreeTest, DeleteRootNode) {
+TEST(RBTreeTest1, DeleteRootNode) {
   set<int> tree;
   tree.insert(10);
   tree.insert(5);
@@ -642,11 +642,6 @@ TEST(SetInsertTest, RLRotate_SunHasBothChildren) {
   std::vector<int> result(s.begin(), s.end());
   EXPECT_EQ(result, std::vector<int>({50, 55, 60, 65, 80}));
   s.print();
-}
-
-int main(int argc, char** argv) {
-  ::testing::InitGoogleTest(&argc, argv);
-  return RUN_ALL_TESTS();
 }
 
 TEST(SetInsertTest, InsertManyFixedElements) {

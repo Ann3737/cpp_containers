@@ -1,4 +1,4 @@
-#include "../s21_List/s21_list.h"
+#include "../s21_list/s21_list.h"
 
 namespace s21 {
 /*

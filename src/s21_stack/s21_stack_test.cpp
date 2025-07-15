@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
-#include "s21_Stack.h"  // <-- твой Stack
-#include "../s21_List/s21_list.h"   // <-- нужный контейнер
+#include "s21_stack.h"  // <-- твой Stack
+#include "../s21_list/s21_list.h"   // <-- нужный контейнер
 
 using namespace s21;
 

@@ -7,7 +7,7 @@
 using namespace s21;
 
 
-TEST(MultisetInsertMany, InsertMultipleInts) {
+TEST(MultisetInsertMany13, InsertMultipleInts) {
     s21::multiset<int> ms;
     auto results = ms.insert_many(10, 20, 30);
 
@@ -23,7 +23,7 @@ TEST(MultisetInsertMany, InsertMultipleInts) {
     EXPECT_EQ(ms.size(), 3);
 }
 
-TEST(MultisetInsertMany, InsertSingleInt) {
+TEST(MultisetInsertMany11, InsertSingleInt) {
     s21::multiset<int> ms;
     auto results = ms.insert_many(42);
 
@@ -35,19 +35,19 @@ TEST(MultisetInsertMany, InsertSingleInt) {
 
 // Эти тесты не компилируются, это ожидаемо — static_assert ловит ошибки
 
-TEST(MultisetInsertMany, InsertNoArgs) {
+TEST(MultisetInsertMany11, InsertNoArgs) {
     s21::multiset<int> ms;
     // Ошибка компиляции: sizeof...(args) == 0
     // auto results = ms.insert_many();
 }
 
-TEST(MultisetInsertMany, InsertWrongType) {
+TEST(MultisetInsertMany11, InsertWrongType) {
     s21::multiset<int> ms;
     // Ошибка компиляции: const char* не конвертируется в int
     // auto results = ms.insert_many(1, 2, "text");
 }
 
-TEST(RBTreeTest, NewTree) {
+TEST(RBTreeTest2, NewTree) {
   multiset<int> tree;
   tree.insert(10);
   tree.insert(5);
@@ -62,7 +62,7 @@ TEST(RBTreeTest, NewTree) {
   ASSERT_NE(it, tree.end());
 }
 
-TEST(RBTreeTest, EraseElementReturnsNextIterator1) {
+TEST(RBTreeTest2, EraseElementReturnsNextIterator1) {
   multiset<int> tree;
   tree.insert(1);
   tree.insert(2);
@@ -73,7 +73,7 @@ TEST(RBTreeTest, EraseElementReturnsNextIterator1) {
   ASSERT_NE(next, tree.end());
 }
 
-TEST(RBTreeTest, EraseLastElementReturnsEnd1) {
+TEST(RBTreeTest2, EraseLastElementReturnsEnd1) {
   multiset<int> tree;
   tree.insert(1);
   auto it = tree.find(1);
@@ -82,7 +82,7 @@ TEST(RBTreeTest, EraseLastElementReturnsEnd1) {
   EXPECT_EQ(next, tree.end());
 }
 
-TEST(RBTreeTest, EraseLeafNode1) {
+TEST(RBTreeTest2, EraseLeafNode1) {
   multiset<int> tree;
   tree.insert(10);
   tree.insert(5);
@@ -92,7 +92,7 @@ TEST(RBTreeTest, EraseLeafNode1) {
   EXPECT_EQ(it, tree.end());
 }
 
-TEST(RBTreeTest, EraseNodeWithOneChild1) {
+TEST(RBTreeTest2, EraseNodeWithOneChild1) {
   multiset<int> tree;
   tree.insert(10);
   tree.insert(5);
@@ -104,7 +104,7 @@ TEST(RBTreeTest, EraseNodeWithOneChild1) {
   EXPECT_EQ(iter, tree.end());
 }
 
-TEST(RBTreeTest, EraseNodeWithTwoChild1) {
+TEST(RBTreeTest2, EraseNodeWithTwoChild1) {
   multiset<int> tree;
   tree.insert(10);
   tree.insert(5);
@@ -115,7 +115,7 @@ TEST(RBTreeTest, EraseNodeWithTwoChild1) {
   EXPECT_EQ(iter, tree.end());
 }
 
-TEST(RBTreeTest, EraseNodeWithTwoChildren1) {
+TEST(RBTreeTest2, EraseNodeWithTwoChildren1) {
   multiset<int> tree;
   tree.insert(10);
   tree.insert(5);
@@ -128,7 +128,7 @@ TEST(RBTreeTest, EraseNodeWithTwoChildren1) {
   EXPECT_EQ(it, tree.end());
 }
 
-TEST(RBTreeTest, EraseRootNode1) {
+TEST(RBTreeTest2, EraseRootNode1) {
   multiset<int> tree;
   tree.insert(10);
   tree.erase(tree.find(10));
@@ -136,7 +136,7 @@ TEST(RBTreeTest, EraseRootNode1) {
   EXPECT_EQ(it, tree.end());
 }
 
-TEST(RBTreeTest, EraseSingleElement) {
+TEST(RBTreeTest2, EraseSingleElement) {
   multiset<int> tree;
   auto it = tree.insert(42);
   EXPECT_EQ(tree.size(), 1);
@@ -147,7 +147,7 @@ TEST(RBTreeTest, EraseSingleElement) {
   EXPECT_EQ(it, tree.end());
 }
 
-TEST(RBTreeTest, EraseRootWithTwoChildren) {
+TEST(RBTreeTest2, EraseRootWithTwoChildren) {
   multiset<int> tree;
   tree.insert(10);
   tree.insert(5);
@@ -159,7 +159,7 @@ TEST(RBTreeTest, EraseRootWithTwoChildren) {
   EXPECT_EQ(it, tree.end());
 }
 
-TEST(RBTreeTest, EraseLeaf) {
+TEST(RBTreeTest2, EraseLeaf) {
   multiset<int> tree;
   tree.insert(10);
   tree.insert(5);
@@ -169,7 +169,7 @@ TEST(RBTreeTest, EraseLeaf) {
   EXPECT_EQ(tree.size(), 1);
 }
 
-TEST(RBTreeTest, EraseNodeWithOneChild) {
+TEST(RBTreeTest2, EraseNodeWithOneChild) {
   multiset<int> tree;
   tree.insert(10);
   tree.insert(5);
@@ -179,7 +179,7 @@ TEST(RBTreeTest, EraseNodeWithOneChild) {
   EXPECT_EQ(it, tree.end());
 }
 
-TEST(RBTreeTest, EraseNodeWithTwoChildren_SuccessorIsRightChild) {
+TEST(RBTreeTest2, EraseNodeWithTwoChildren_SuccessorIsRightChild) {
   multiset<int> tree;
   tree.insert(20);
   tree.insert(10);
@@ -196,7 +196,7 @@ TEST(RBTreeTest, EraseNodeWithTwoChildren_SuccessorIsRightChild) {
   EXPECT_EQ(it, tree.end());
 }
 
-TEST(RBTreeTest, EraseNodeWithTwoChildren_SuccessorIsDeeper) {
+TEST(RBTreeTest2, EraseNodeWithTwoChildren_SuccessorIsDeeper) {
   multiset<int> tree;
   tree.insert(20);
   tree.insert(10);
@@ -221,7 +221,7 @@ TEST(RBTreeTest, EraseNodeWithTwoChildren_SuccessorIsDeeper) {
   EXPECT_NE(it, tree.end());
 }
 
-TEST(RBTreeTest, EraseNodeWithTwoChildren_SuccessorWithAndWithoutRightChild) {
+TEST(RBTreeTest2, EraseNodeWithTwoChildren_SuccessorWithAndWithoutRightChild) {
   multiset<int> tree;
   tree.insert(20);
   tree.insert(10);
@@ -249,7 +249,7 @@ TEST(RBTreeTest, EraseNodeWithTwoChildren_SuccessorWithAndWithoutRightChild) {
   EXPECT_EQ(*it2, 27);
 }
 
-TEST(RBTreeTest, DeleteRedLeaf) {
+TEST(RBTreeTest2, DeleteRedLeaf) {
   multiset<int> tree;
   tree.insert(10);
   tree.insert(5);
@@ -262,7 +262,7 @@ TEST(RBTreeTest, DeleteRedLeaf) {
   ASSERT_EQ(it, tree.end());
 }
 
-TEST(RBTreeTest, DeleteBlackLeaf) {
+TEST(RBTreeTest2, DeleteBlackLeaf) {
   multiset<int> tree;
   tree.insert(10);
   tree.insert(5);
@@ -278,7 +278,7 @@ TEST(RBTreeTest, DeleteBlackLeaf) {
   ASSERT_EQ(it, tree.end());
 }
 
-TEST(RBTreeTest, DeleteNodeWithOneRedChild) {
+TEST(RBTreeTest2, DeleteNodeWithOneRedChild) {
   multiset<int> tree;
   tree.insert(10);
   tree.insert(5);
@@ -293,7 +293,7 @@ TEST(RBTreeTest, DeleteNodeWithOneRedChild) {
   ASSERT_NE(it2, tree.end());
 }
 
-TEST(RBTreeTest, DeleteNodeWithTwoChildren) {
+TEST(RBTreeTest2, DeleteNodeWithTwoChildren) {
   multiset<int> tree;
   tree.insert(20);
   tree.insert(10);
@@ -312,7 +312,7 @@ TEST(RBTreeTest, DeleteNodeWithTwoChildren) {
   ASSERT_NE(it3, tree.end());
 }
 
-TEST(RBTreeTest, DeleteRootNode) {
+TEST(RBTreeTest2, DeleteRootNode) {
   multiset<int> tree;
   tree.insert(10);
   tree.insert(5);
@@ -326,7 +326,7 @@ TEST(RBTreeTest, DeleteRootNode) {
 }
 
 
-TEST(mSetTest, InsertAscending) {
+TEST(mSetTest1, InsertAscending) {
   s21::multiset<int> set;
   for (int i = 1; i <= 50; ++i) {
     set.insert(i);
@@ -339,7 +339,7 @@ TEST(mSetTest, InsertAscending) {
   }
 }
 
-TEST(mSetTest, InsertDescending) {
+TEST(mSetTest1, InsertDescending) {
   s21::multiset<int> set;
   for (int i = 50; i >= 1; --i) {
     set.insert(i);
@@ -352,7 +352,7 @@ TEST(mSetTest, InsertDescending) {
   }
 }
 
-TEST(SetInsertTes, RRRotate) {
+TEST(SetInsertTest1, RRRotate) {
   s21::multiset<int> s;
   s.insert(10);
   s.insert(20);
@@ -368,7 +368,7 @@ TEST(SetInsertTes, RRRotate) {
 }
 
 // 1
-TEST(SetInsertTest, InsertRootOnly) {
+TEST(t1t1, InsertRootOnly) {
   s21::multiset<int> s;
   s.insert(10);
   std::vector<int> result(s.begin(), s.end());
@@ -376,7 +376,7 @@ TEST(SetInsertTest, InsertRootOnly) {
 }
 
 // 2
-TEST(SetInsertTest, LLRotate) {
+TEST(t1t1, LLRotate) {
   s21::multiset<int> s;
   s.insert(30);
   s.insert(20);
@@ -387,7 +387,7 @@ TEST(SetInsertTest, LLRotate) {
 }
 
 // 3
-TEST(SetInsertTest, RRRotate) {
+TEST(t1t1, RRRotate) {
   s21::multiset<int> s;
   s.insert(30);
   s.insert(10);
@@ -398,7 +398,7 @@ TEST(SetInsertTest, RRRotate) {
 }
 
 // 4
-TEST(SetInsertTest, LRRotate) {
+TEST(t1t1, LRRotate) {
   s21::multiset<int> s;
   s.insert(10);
   s.insert(30);
@@ -409,7 +409,7 @@ TEST(SetInsertTest, LRRotate) {
 }
 
 // 5
-TEST(SetInsertTest, RLRotate) {
+TEST(t1t1, RLRotate) {
   s21::multiset<int> s;
   s.insert(10);
   s.insert(30);
@@ -420,7 +420,7 @@ TEST(SetInsertTest, RLRotate) {
 }
 
 // 6
-TEST(SetInsertTest, RecoloringUncleRed) {
+TEST(t1t1, RecoloringUncleRed) {
   s21::multiset<int> s;
   s.insert(10);
   s.insert(5);
@@ -432,7 +432,7 @@ TEST(SetInsertTest, RecoloringUncleRed) {
 }
 
 // 7
-TEST(SetInsertTest, RecoloringWithRecursion) {
+TEST(t1t1, RecoloringWithRecursion) {
   s21::multiset<int> s;
   s.insert(10);
   s.insert(5);
@@ -445,7 +445,7 @@ TEST(SetInsertTest, RecoloringWithRecursion) {
 }
 
 // 8
-TEST(SetInsertTest, RLRotateAtRoot) {
+TEST(t1t1, RLRotateAtRoot) {
   s21::multiset<int> s;
   s.insert(50);
   s.insert(70);
@@ -454,7 +454,7 @@ TEST(SetInsertTest, RLRotateAtRoot) {
   EXPECT_EQ(result, std::vector<int>({50, 60, 70}));
 }
 
-TEST(SetInsertTest, RLRotate_SunWithChildren) {
+TEST(t1t1, RLRotate_SunWithChildren) {
   s21::multiset<int> s;
   s.insert(10);
   s.insert(60);
@@ -466,7 +466,7 @@ TEST(SetInsertTest, RLRotate_SunWithChildren) {
   EXPECT_EQ(result, std::vector<int>({10, 20, 30, 35, 40, 60}));
 }
 
-TEST(SetInsertTest, RLRotate_SunHasLeftChildOnly) {
+TEST(t1t1, RLRotate_SunHasLeftChildOnly) {
   s21::multiset<int> s;
   s.insert(50);
   s.insert(80);
@@ -476,7 +476,7 @@ TEST(SetInsertTest, RLRotate_SunHasLeftChildOnly) {
   EXPECT_EQ(result, std::vector<int>({50, 55, 60, 80}));
 }
 
-TEST(SetInsertTest, RLRotate_SunHasRightChildOnly) {
+TEST(t1t1, RLRotate_SunHasRightChildOnly) {
   s21::multiset<int> s;
   s.insert(50);
   s.insert(80);
@@ -486,7 +486,7 @@ TEST(SetInsertTest, RLRotate_SunHasRightChildOnly) {
   EXPECT_EQ(result, std::vector<int>({50, 60, 65, 80}));
 }
 
-TEST(SetInsertTest, RLRotate_SunHasBothChildren) {
+TEST(t1t1, RLRotate_SunHasBothChildren) {
   s21::multiset<int> s;
   s.insert(50);
   s.insert(80);
@@ -497,7 +497,7 @@ TEST(SetInsertTest, RLRotate_SunHasBothChildren) {
   EXPECT_EQ(result, std::vector<int>({50, 55, 60, 65, 80}));
 }
 
-TEST(SetEraseTest, Case3_LeftBrotherLeftRedRightBlack) {
+TEST(SetEraseTest1, Case3_LeftBrotherLeftRedRightBlack) {
   s21::multiset<int> set;
 
   // Сконструируем вручную, чтобы получить нужную ситуацию:
@@ -516,7 +516,7 @@ TEST(SetEraseTest, Case3_LeftBrotherLeftRedRightBlack) {
 
 }
 
-TEST(SetEraseTest, EraseRoot) {
+TEST(SetEraseTest1, EraseRoot) {
   s21::multiset<int> set;
   set.insert(10);
   set.insert(5);
@@ -530,7 +530,7 @@ TEST(SetEraseTest, EraseRoot) {
   ASSERT_EQ(set.find(10), set.end());
 }
 
-TEST(SETEraseTest, EraseNodeWithTwoChildren) {
+TEST(SetEraseTest1, EraseNodeWithTwoChildren) {
   s21::multiset<int> set;
   set.insert(20);
   set.insert(10);
@@ -547,7 +547,7 @@ TEST(SETEraseTest, EraseNodeWithTwoChildren) {
   ASSERT_NE(set.find(15), set.end());
 }
 
-TEST(SetEraseTest, EraseLeaf) {
+TEST(SetEraseTest1, EraseLeaf) {
   s21::multiset<int> set;
   set.insert(10);
   set.insert(5);
@@ -560,7 +560,7 @@ TEST(SetEraseTest, EraseLeaf) {
   ASSERT_EQ(set.find(5), set.end());
 }
 
-TEST(SETEraseTest, EraseNodeWithOneChild) {
+TEST(SetEraseTest1, EraseNodeWithOneChild) {
   s21::multiset<int> set;
   set.insert(10);
   set.insert(5);
@@ -574,7 +574,7 @@ TEST(SETEraseTest, EraseNodeWithOneChild) {
   ASSERT_NE(set.find(3), set.end());
 }
 
-TEST(SetEraseTest, EraseFromBeginningToEnd) {
+TEST(SetEraseTest1, EraseFromBeginningToEnd) {
   s21::multiset<int> set;
   for (int i = 1; i <= 10; ++i) {
     set.insert(i);
@@ -589,7 +589,7 @@ TEST(SetEraseTest, EraseFromBeginningToEnd) {
   ASSERT_TRUE(set.empty());
 }
 
-TEST(SetEraseTest, EraseInReverseOrder) {
+TEST(SetEraseTest1, EraseInReverseOrder) {
   s21::multiset<int> set;
   for (int i = 1; i <= 10; ++i) {
     set.insert(i);
@@ -604,7 +604,7 @@ TEST(SetEraseTest, EraseInReverseOrder) {
   ASSERT_TRUE(set.empty());
 }
 
-TEST(SetEraseTest, EraseComplexBalanceCase) {
+TEST(SetEraseTest1, EraseComplexBalanceCase) {
   s21::multiset<int> set;
   // Вставим такие значения, чтобы при удалении были разные случаи балансировки
   std::vector<int> values = {10, 5, 15, 1, 6, 12, 17, 0, 2, 7};
@@ -625,14 +625,14 @@ TEST(SetEraseTest, EraseComplexBalanceCase) {
   }
 }
 
-TEST(SetIteratorTest, IteratorDereferenceThrowsOnEnd) {
+TEST(SetIteratorTest1, IteratorDereferenceThrowsOnEnd) {
   multiset<int> s;
   auto it = s.end();
 
   EXPECT_THROW(*it, std::out_of_range);
 }
 
-TEST(SetConstIteratorTest, ConstIteration) {
+TEST(SetConstIteratorTest4, ConstIteration) {
   multiset<int> s;
   s.insert(8);
   s.insert(3);
@@ -649,7 +649,7 @@ TEST(SetConstIteratorTest, ConstIteration) {
   EXPECT_EQ(result, expected);
 }
 
-TEST(ConstIteratorTest, IncrementCoversLeftTraversalAndParentTraversal) {
+TEST(ConstIteratorTest4, IncrementCoversLeftTraversalAndParentTraversal) {
   multiset<int> s = {20, 10, 30, 25, 35};  // 30 has left 25, right 35
 
   auto it = s.find(20);
@@ -663,13 +663,13 @@ TEST(ConstIteratorTest, IncrementCoversLeftTraversalAndParentTraversal) {
 
 
 
-TEST(ConstIteratorTest, DereferenceThrowsWhenEnd) {
+TEST(ConstIteratorTest4, DereferenceThrowsWhenEnd) {
   multiset<int> s = {1, 2, 3};
   multiset<int>::const_iterator it = s.end();
   EXPECT_THROW(*it, std::out_of_range);
 }
 
-TEST(SetConstructorTest, MoveConstructor) {
+TEST(SetConstructorTest1, MoveConstructor) {
   multiset<int> s1 = {10, 20};
   multiset<int> s2(std::move(s1));
   EXPECT_EQ(s2.size(), 2);
@@ -677,7 +677,7 @@ TEST(SetConstructorTest, MoveConstructor) {
   EXPECT_TRUE(s1.empty());
 }
 
-TEST(SetOperatorTest, CopyAssignment) {
+TEST(SetOperatorTest2, CopyAssignment) {
   multiset<int> a = {1, 2, 3};
   multiset<int> b;
   b = a;
@@ -685,7 +685,7 @@ TEST(SetOperatorTest, CopyAssignment) {
   EXPECT_TRUE(b.contains(1));
 }
 
-TEST(SetOperatorTest, MoveAssignment) {
+TEST(SetOperatorTest2, MoveAssignment) {
   multiset<int> a = {4, 5, 6};
   multiset<int> b;
   b = std::move(a);
@@ -694,13 +694,13 @@ TEST(SetOperatorTest, MoveAssignment) {
   EXPECT_TRUE(a.empty());
 }
 
-TEST(SetBalanceTest, EraseCausesRebalanceLR) {
+TEST(SetBalanceTest1, EraseCausesRebalanceLR) {
   multiset<int> s = {50, 20, 70, 10, 30, 25};
   s.erase(s.find(70));  // LR дисбаланс после удаления
   EXPECT_TRUE(s.contains(25));
 }
 
-TEST(SetBalanceAndEraseTest, InsertLRRotation) {
+TEST(SetBalanceAndEraseTest3, InsertLRRotation) {
   multiset<int> s;
   s.insert(30);
   s.insert(10);
@@ -710,7 +710,7 @@ TEST(SetBalanceAndEraseTest, InsertLRRotation) {
   EXPECT_TRUE(s.contains(30));
 }
 
-TEST(SetBalanceAndEraseTest, InsertRLRotation) {
+TEST(SetBalanceAndEraseTest3, InsertRLRotation) {
   multiset<int> s;
   s.insert(10);
   s.insert(30);
@@ -720,7 +720,7 @@ TEST(SetBalanceAndEraseTest, InsertRLRotation) {
   EXPECT_TRUE(s.contains(30));
 }
 
-TEST(SetRBTreeEraseBalance, Case3_BlackBrotherAndRedLeftChild) {
+TEST(SetRBTreeEraseBalance1, Case3_BlackBrotherAndRedLeftChild) {
   multiset<int> s;
   s.insert(50);
   s.insert(30);
@@ -733,7 +733,7 @@ TEST(SetRBTreeEraseBalance, Case3_BlackBrotherAndRedLeftChild) {
   EXPECT_FALSE(s.contains(80));
 }
 
-TEST(SetEraseCasesTest, RemoveNodeWithTwoChildren) {
+TEST(SetEraseCasesTest2, RemoveNodeWithTwoChildren) {
   s21::multiset<int> s;
   s.insert(10);
   s.insert(5);
@@ -751,7 +751,7 @@ TEST(SetEraseCasesTest, RemoveNodeWithTwoChildren) {
 }
 
 // 8. Большое дерево — удаление нескольких элементов подряд с разными случаями
-TEST(SetEraseCasesTest, RemoveMultipleElementsInBigTree) {
+TEST(SetEraseCasesTest2, RemoveMultipleElementsInBigTree) {
   s21::multiset<int> s;
   for (int i = 1; i <= 50; ++i) {
     s.insert(i);
@@ -779,7 +779,7 @@ TEST(SetEraseCasesTest, RemoveMultipleElementsInBigTree) {
   EXPECT_FALSE(s.contains(10));
 }
 
-TEST(SetTest, LRRotate_GrandIsLeftChild) {
+TEST(SetTest1, LRRotate_GrandIsLeftChild) {
   s21::multiset<int> set;
   set.insert(20);
   set.insert(10);
@@ -789,7 +789,7 @@ TEST(SetTest, LRRotate_GrandIsLeftChild) {
   set.insert(13);  // Здесь произойдет LR-ротация
 }
 
-TEST(SetTest, LRRotate_SunHasRightChild) {
+TEST(SetTest1, LRRotate_SunHasRightChild) {
   s21::multiset<int> set;
   set.insert(20);
   set.insert(10);
@@ -801,7 +801,7 @@ TEST(SetTest, LRRotate_SunHasRightChild) {
 
 }
 
-TEST(MultiSetTest, InsertAndFindMultiple) {
+TEST(MultiSetTest1, InsertAndFindMultiple) {
     multiset<int> ms;
     ms.insert(10);
     ms.insert(10);
@@ -822,7 +822,7 @@ TEST(MultiSetTest, InsertAndFindMultiple) {
     EXPECT_EQ(ms.find(100), ms.end());
 }
 
-TEST(MultiSetTest, EqualRangeReturnsCorrectRange) {
+TEST(MultiSetTest1, EqualRangeReturnsCorrectRange) {
     multiset<int> ms;
     ms.insert(10);
     ms.insert(10);
@@ -843,7 +843,7 @@ TEST(MultiSetTest, EqualRangeReturnsCorrectRange) {
     EXPECT_EQ(empty_range.first, empty_range.second);
 }
 
-TEST(MultiSetTest, LowerBoundAndUpperBound) {
+TEST(MultiSetTest1, LowerBoundAndUpperBound) {
     multiset<int> ms;
     ms.insert(10);
     ms.insert(15);
@@ -868,7 +868,7 @@ TEST(MultiSetTest, LowerBoundAndUpperBound) {
     EXPECT_EQ(ub2, ms.end());
 }
 
-TEST(MultiSetTest, EraseSingleElement) {
+TEST(MultiSetTest1, EraseSingleElement) {
     multiset<int> ms;
     ms.insert(10);
     ms.insert(20);
@@ -883,7 +883,7 @@ TEST(MultiSetTest, EraseSingleElement) {
     EXPECT_EQ(ms.size(), 2);
 }
 
-TEST(MultiSetTest, EraseOneOfMultipleEqualElements) {
+TEST(MultiSetTest1, EraseOneOfMultipleEqualElements) {
     multiset<int> ms;
     ms.insert(10);
     ms.insert(10);
@@ -900,7 +900,7 @@ TEST(MultiSetTest, EraseOneOfMultipleEqualElements) {
     EXPECT_EQ(ms.size(), 2);
 }
 
-TEST(MultiSetTest, EraseAllElements) {
+TEST(MultiSetTest1, EraseAllElements) {
     multiset<int> ms;
     ms.insert(1);
     ms.insert(2);
@@ -917,7 +917,7 @@ TEST(MultiSetTest, EraseAllElements) {
 
 using s21::multiset;
 
-TEST(MultisetEraseTest, EraseSingleElement) {
+TEST(MultiSetEraseTest1, EraseSingleElement) {
   multiset<int> ms;
   ms.insert(10);
   auto it = ms.find(10);
@@ -927,7 +927,7 @@ TEST(MultisetEraseTest, EraseSingleElement) {
   EXPECT_EQ(it, ms.end());
 }
 
-TEST(MultisetEraseTest, EraseFirstOfDuplicates) {
+TEST(MultiSetEraseTest1, EraseFirstOfDuplicates) {
   multiset<int> ms;
   ms.insert(10);
   ms.insert(10);
@@ -940,7 +940,7 @@ TEST(MultisetEraseTest, EraseFirstOfDuplicates) {
   EXPECT_EQ(*ms.find(10), 10);
 }
 
-TEST(MultisetEraseTest, EraseAllDuplicatesInLoop) {
+TEST(MultiSetEraseTest1, EraseAllDuplicatesInLoop) {
   multiset<int> ms;
   ms.insert(10);
   ms.insert(10);
@@ -956,7 +956,7 @@ TEST(MultisetEraseTest, EraseAllDuplicatesInLoop) {
   EXPECT_EQ(ms.size(), 0);
 }
 
-TEST(MultisetEraseTest, EraseReturnsNextIterator) {
+TEST(MultiSetEraseTest1, EraseReturnsNextIterator) {
   multiset<int> ms;
   ms.insert(5);
   ms.insert(10);
@@ -969,7 +969,7 @@ TEST(MultisetEraseTest, EraseReturnsNextIterator) {
   //EXPECT_EQ(ms.count(10), 0);
 }
 
-TEST(MultisetEraseTest, EraseLastElementReturnsEnd) {
+TEST(MultiSetEraseTest1, EraseLastElementReturnsEnd) {
   multiset<int> ms;
   ms.insert(10);
   auto it = ms.find(10);
@@ -979,7 +979,7 @@ TEST(MultisetEraseTest, EraseLastElementReturnsEnd) {
   EXPECT_TRUE(ms.empty());
 }
 
-TEST(MultisetEraseTest, EraseFromEmpty) {
+TEST(MultiSetEraseTest1, EraseFromEmpty) {
   multiset<int> ms;
   auto it = ms.end();  // итератор на конец
   auto result = ms.erase(it);
@@ -1080,7 +1080,7 @@ TEST(MultisetBoundTest, BoundsAndRange) {
   EXPECT_EQ(ms.count(20), 3);
 }
 
-TEST(MultisetEraseTest, EraseAllByValue) {
+TEST(MultiSetEraseTest1, EraseAllByValue) {
   multiset<int> ms = {5, 5, 5, 7, 7, 9};
 
   EXPECT_EQ(ms.erase(5), 3);
@@ -1092,7 +1092,7 @@ TEST(MultisetEraseTest, EraseAllByValue) {
   EXPECT_EQ(ms.erase(42), 0);
 }
 
-TEST(MultisetEraseTest, EraseByIterator) {
+TEST(MultiSetEraseTest1, EraseByIterator) {
   multiset<int> ms = {1, 2, 2, 3, 4};
 
   auto it = ms.find(2);
@@ -1126,7 +1126,7 @@ TEST(MultisetEdgeCaseTest, InsertExtremeValues) {
 
 
 // Проверка count и contains
-TEST(MultiSetTest, CountAndContains) {
+TEST(MultiSetTest1, CountAndContains) {
     multiset<int> ms;
     ms.insert(5);
     ms.insert(5);
@@ -1142,7 +1142,7 @@ TEST(MultiSetTest, CountAndContains) {
 }
 
 // Проверка clear
-TEST(MultiSetTest, ClearTest) {
+TEST(MultiSetTest1, ClearTest) {
     multiset<int> ms;
     ms.insert(1);
     ms.insert(2);
@@ -1159,7 +1159,7 @@ TEST(MultiSetTest, ClearTest) {
 }
 
 // Проверка swap
-TEST(MultiSetTest, SwapTest) {
+TEST(MultiSetTest1, SwapTest) {
     multiset<int> ms1;
     multiset<int> ms2;
 
@@ -1180,7 +1180,7 @@ TEST(MultiSetTest, SwapTest) {
 }
 
 // Проверка merge
-TEST(MultiSetTest, MergeTest) {
+TEST(MultiSetTest1, MergeTest) {
     multiset<int> a;
     multiset<int> b;
 
@@ -1197,7 +1197,7 @@ TEST(MultiSetTest, MergeTest) {
 }
 
 // Проверка итераторов (begin, end)
-TEST(MultiSetTest, IteratorTest) {
+TEST(MultiSetTest1, IteratorTest) {
     multiset<int> ms;
     ms.insert(10);
     ms.insert(5);
@@ -1214,7 +1214,7 @@ TEST(MultiSetTest, IteratorTest) {
 }
 
 // Проверка const итераторов
-TEST(MultiSetTest, ConstIteratorTest) {
+TEST(MultiSetTest1, ConstIteratorTest4) {
     multiset<int> ms;
     ms.insert(10);
     ms.insert(20);
@@ -1228,7 +1228,7 @@ TEST(MultiSetTest, ConstIteratorTest) {
 }
 
 // Проверка size и empty
-TEST(MultiSetTest, SizeAndEmpty) {
+TEST(MultiSetTest1, SizeAndEmpty) {
     multiset<int> ms;
     EXPECT_TRUE(ms.empty());
     EXPECT_EQ(ms.size(), 0);
@@ -1240,7 +1240,7 @@ TEST(MultiSetTest, SizeAndEmpty) {
 }
 
 // Проверка вставки большого количества элементов
-TEST(MultiSetTest, MassInsert) {
+TEST(MultiSetTest1, MassInsert) {
     multiset<int> ms;
     for (int i = 0; i < 1000; ++i) {
         ms.insert(i % 10);  // дубликаты
@@ -1250,7 +1250,7 @@ TEST(MultiSetTest, MassInsert) {
 }
 
 // Проверка вставки через итераторы (если реализовано)
-TEST(MultiSetTest, InsertRangeIfSupported) {
+TEST(MultiSetTest1, InsertRangeIfSupported) {
     multiset<int> ms;
     std::vector<int> vec = {1, 2, 2, 3, 3, 3};
     for (int val : vec)
@@ -1262,14 +1262,14 @@ TEST(MultiSetTest, InsertRangeIfSupported) {
 }
 
 // Проверка поведения upper_bound и lower_bound на пустом контейнере
-TEST(MultiSetTest, BoundsOnEmptyContainer) {
+TEST(MultiSetTest1, BoundsOnEmptyContainer) {
     multiset<int> ms;
     EXPECT_EQ(ms.lower_bound(5), ms.end());
     EXPECT_EQ(ms.upper_bound(5), ms.end());
 }
 
 // Проверка equal_range на уникальном значении
-TEST(MultiSetTest, EqualRangeSingle) {
+TEST(MultiSetTest1, EqualRangeSingle) {
     multiset<int> ms;
     ms.insert(7);
     auto range = ms.equal_range(7);
@@ -1278,7 +1278,7 @@ TEST(MultiSetTest, EqualRangeSingle) {
     EXPECT_EQ(std::distance(range.first, range.second), 1);
 }
 
-TEST(SetTest, InsertAscending) {
+TEST(SetTest1, InsertAscending) {
   s21::multiset<int> set;
   for (int i = 1; i <= 50; ++i) {
     set.insert(i);
@@ -1291,7 +1291,7 @@ TEST(SetTest, InsertAscending) {
   }
 }
 
-TEST(SetTest, InsertDescending) {
+TEST(SetTest1, InsertDescending) {
   s21::multiset<int> set;
   for (int i = 50; i >= 1; --i) {
     set.insert(i);

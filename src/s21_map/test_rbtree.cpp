@@ -5,7 +5,7 @@
 #include "gtest/gtest.h"
 #include "rb_tree.h"
 
-TEST(RBTreeTest, EraseNodeWithTwoChildren_ConstIterator) {
+TEST(RBTreeTest, EraseNodeWithTwoChildren_ConstIterator1) {
   rbtree<int, std::string> tree;
   tree.insert({10, "a"});
   tree.insert({5, "b"});
@@ -88,7 +88,7 @@ TEST(RBTreeTest, EraseNodeWithOneChild) {
   EXPECT_EQ(tree.find(10), tree.end());
 }
 
-TEST(RBTreeTest, EraseNodeWithTwoChildren_SuccessorIsRightChild) {
+TEST(RBTreeTest, EraseNodeWithTwoChildren_SuccessorIsRightChild2) {
   rbtree<int, std::string> tree;
   tree.insert({20, "root"});
   tree.insert({10, "left"});
@@ -103,7 +103,7 @@ TEST(RBTreeTest, EraseNodeWithTwoChildren_SuccessorIsRightChild) {
   EXPECT_EQ(tree.find(10), tree.cend());
 }
 
-TEST(RBTreeTest, EraseNodeWithTwoChildren_SuccessorIsDeeper) {
+TEST(RBTreeTest, EraseNodeWithTwoChildren_SuccessorIsDeeper3) {
   rbtree<int, std::string> tree;
   tree.insert({20, "root"});
   tree.insert({10, "left"});
@@ -116,7 +116,7 @@ TEST(RBTreeTest, EraseNodeWithTwoChildren_SuccessorIsDeeper) {
   EXPECT_EQ(tree.find(20), tree.cend());
 }
 
-TEST(RBTreeTest, EraseNodeWithTwoChildren_SuccessorWithAndWithoutRightChild) {
+TEST(RBTreeTest, EraseNodeWithTwoChildren_SuccessorWithAndWithoutRightChild4) {
   rbtree<int, std::string> tree;
   tree.insert({20, "root"});
   tree.insert({10, "left"});
@@ -224,7 +224,7 @@ TEST(RBTreeTest, EraseNodeWithTwoChild1) {
   EXPECT_EQ(tree.find(5), tree.cend());
 }
 
-TEST(RBTreeTest, EraseNodeWithTwoChildren1) {
+TEST(RBTreeTest, EraseNodeWithTwoChildren12) {
   rbtree<int, std::string> tree;
   tree.insert({10, "a"});
   tree.insert({5, "b"});
