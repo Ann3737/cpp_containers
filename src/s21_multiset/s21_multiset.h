@@ -99,14 +99,6 @@ class multiset {
     grand->right_ = nullptr;  // оставил
     sun->left_ = grand;
 
-    /* ЕЩЕ УБРАЛ
-    if (sun->right_) {
-      father->left_ = sun->right_;
-      sun->right_->parent_ = father;
-    } else {
-      father->left_ = nullptr;
-    }*/
-
     father->left_ = nullptr;  // оставил
     sun->right_ = father;
     father->parent_ = sun;
@@ -123,12 +115,7 @@ class multiset {
 
     if (grand->parent_) {
       sun->parent_ = grand->parent_;
-      /**
-      if (grand->parent_->left_ == grand) {
-        grand->parent_->left_ = sun;
-      } else {
-        grand->parent_->right_ = sun;
-      }*/
+
       grand->parent_->right_ = sun;  // оставил
 
     } else {
@@ -137,23 +124,10 @@ class multiset {
     }
 
     grand->parent_ = sun;
-    /*
-    if (sun->right_) {
-      grand->left_ = sun->right_;
-      sun->right_->parent_ = grand;
-    } else {
-      grand->left_ = nullptr;
-    }*/
+ 
     grand->left_ = nullptr;  // оставил
     sun->right_ = grand;
 
-    /*
-    if (sun->left_) {
-      father->right_ = sun->left_;
-      sun->left_->parent_ = father;
-    } else {
-      father->right_ = nullptr;
-    }*/
     father->right_ = nullptr;  // оставил
     sun->left_ = father;
     father->parent_ = sun;

@@ -117,13 +117,7 @@ class set {
     }
 
     grand->parent_ = sun;
-    /*
-    if (sun->right_) {
-      grand->left_ = sun->right_;
-      sun->right_->parent_ = grand;
-    } else {
-      grand->left_ = nullptr;
-    }*/
+
     grand->left_ = nullptr;  // оставил
     sun->right_ = grand;
     father->right_ = nullptr;
