@@ -17,25 +17,36 @@ class Stack {
 
   // конструкторы
   Stack() = default;
+
   explicit Stack(const Container& cont) : c_(cont) {}
+
   Stack(const Stack& other) = default;
+
   Stack(Stack&& other) noexcept = default;
+
   Stack& operator=(const Stack& other) = default;
+
   Stack& operator=(Stack&& other) noexcept = default;
+
   Stack(std::initializer_list<value_type> const& items) {
     for (auto it = items.begin(); it != items.end(); ++it) {
       this->push(*it);
     }
   }
+
   ~Stack() = default;
 
   // методы
   bool empty() const { return c_.empty(); }
+
   size_type size() const { return c_.size(); }
+
   reference top() { return c_.back(); }
+
   const_reference top() const { return c_.back(); }
 
   void push(const value_type& value) { c_.push_back(value); }
+
   void push(value_type&& value) { c_.push_back(std::move(value)); }
 
   void pop() { c_.pop_back(); }
@@ -50,5 +61,4 @@ class Stack {
  private:
   Container c_;
 };
-
 }  // namespace s21

@@ -1,12 +1,14 @@
+#include "s21_stack.h"
+
 #include <gtest/gtest.h>
-#include "s21_stack.h"  // <-- твой Stack
-#include "../s21_list/s21_list.h"   // <-- нужный контейнер
+
+#include "../s21_list/s21_list.h"
 
 using namespace s21;
 
 TEST(StackTest, InsertManyBack) {
   s21::Stack<int> stack;
-  stack.insert_many_back(1, 2, 3);  // ← должно вставиться: 1 (дно), 2, 3 (top)
+  stack.insert_many_back(1, 2, 3);  // должно вставиться: 1 (дно), 2, 3 (top)
 
   // Элементы в стеке хранятся в порядке: top() == 3, затем 2, затем 1
   std::vector<int> expected = {3, 2, 1};
@@ -18,7 +20,6 @@ TEST(StackTest, InsertManyBack) {
 
   EXPECT_TRUE(stack.empty());  // после всех pop стек должен быть пуст
 }
-
 
 TEST(StackTest, DefaultConstructor) {
   Stack<int> s;

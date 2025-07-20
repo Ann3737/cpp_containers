@@ -9,46 +9,32 @@
 using s21::set;
 
 TEST(SetInsertManyFullTest, UniqueAndDuplicateInsertions) {
-    s21::set<int> my_set;
+  s21::set<int> my_set;
 
-    // Вставка уникальных элементов
-    auto results1 = my_set.insert_many(10, 20, 30);
+  // Вставка уникальных элементов
+  auto results1 = my_set.insert_many(10, 20, 30);
 
-    EXPECT_EQ(results1.size(), 3);
-    for (auto& res : results1) {
-        EXPECT_TRUE(res.second);  // все элементы должны вставиться
-        EXPECT_NE(res.first, my_set.end());  // итератор валидный
-    }
-    EXPECT_EQ(my_set.size(), 3);
+  EXPECT_EQ(results1.size(), 3);
+  for (auto& res : results1) {
+    EXPECT_TRUE(res.second);             // все элементы должны вставиться
+    EXPECT_NE(res.first, my_set.end());  // итератор валидный
+  }
+  EXPECT_EQ(my_set.size(), 3);
 
-    // Вставка с повторяющимися элементами
-    auto results2 = my_set.insert_many(20, 30, 40);
+  // Вставка с повторяющимися элементами
+  auto results2 = my_set.insert_many(20, 30, 40);
 
-    EXPECT_EQ(results2.size(), 3);
-    EXPECT_FALSE(results2[0].second);  // 20 — дубликат, не вставлен
-    EXPECT_FALSE(results2[1].second);  // 30 — дубликат, не вставлен
-    EXPECT_TRUE(results2[2].second);   // 40 — новый, вставлен
+  EXPECT_EQ(results2.size(), 3);
+  EXPECT_FALSE(results2[0].second);  // 20 — дубликат, не вставлен
+  EXPECT_FALSE(results2[1].second);  // 30 — дубликат, не вставлен
+  EXPECT_TRUE(results2[2].second);   // 40 — новый, вставлен
 
-    EXPECT_EQ(my_set.size(), 4);  // размер увеличился только на 1
+  EXPECT_EQ(my_set.size(), 4);  // размер увеличился только на 1
 
-    // Проверка, что итераторы валидные
-    for (auto& res : results2) {
-        EXPECT_NE(res.first, my_set.end());
-    }
-}
-
-// Эти тесты не компилируются, это ожидаемо — static_assert ловит ошибки
-
-TEST(MultisetInsertMany2, InsertNoArgs) {
-    s21::set<int> ms;
-    // Ошибка компиляции: sizeof...(args) == 0
-    // auto results = ms.insert_many();
-}
-
-TEST(MultisetInsertMany2, InsertWrongType) {
-    s21::set<int> ms;
-    // Ошибка компиляции: const char* не конвертируется в int
-    // auto results = ms.insert_many(1, 2, "text");
+  // Проверка, что итераторы валидные
+  for (auto& res : results2) {
+    EXPECT_NE(res.first, my_set.end());
+  }
 }
 
 TEST(RBTreeTest1, NewTree) {
@@ -341,13 +327,9 @@ TEST(SetEraseTest, Case3_LeftBrotherLeftRedRightBlack) {
   set.insert(7);
   set.insert(1);  // <-- Удалим его, чтобы current стал nullptr и был слева
 
-  set.print();  // посмотреть конфигурацию
-
   // Теперь удалим 1 (левый чёрный лист)
   auto it = set.find(1);
   set.erase(it);
-
-  set.print();  // должна сработать Case 3
 }
 
 TEST(SetEraseTest, EraseRoot) {
@@ -444,8 +426,6 @@ TEST(SetEraseTest, EraseComplexBalanceCase) {
   std::vector<int> values = {10, 5, 15, 1, 6, 12, 17, 0, 2, 7};
   for (int val : values) set.insert(val);
 
-  set.print();  // опционально
-
   // Удалим узел, у которого два потомка и это вызовет балансировку
   auto it = set.find(5);
   ASSERT_NE(it, set.end());
@@ -497,21 +477,15 @@ TEST(SetInsertTes, RRRotate) {
   std::vector<int> expected = {10, 20, 30};
 
   EXPECT_EQ(result, expected);
-
-  // Можно добавить вывод дерева, если есть метод print()
-  s.print();
 }
 
-// 1
 TEST(SetInsertTest, InsertRootOnly) {
   s21::set<int> s;
   s.insert(10);
   std::vector<int> result(s.begin(), s.end());
   EXPECT_EQ(result, std::vector<int>{10});
-  s.print();
 }
 
-// 2
 TEST(SetInsertTest, LLRotate) {
   s21::set<int> s;
   s.insert(30);
@@ -520,10 +494,8 @@ TEST(SetInsertTest, LLRotate) {
   std::vector<int> result(s.begin(), s.end());
   std::vector<int> expected = {10, 20, 30};
   EXPECT_EQ(result, expected);
-  s.print();
 }
 
-// 3
 TEST(SetInsertTest, RRRotate) {
   s21::set<int> s;
   s.insert(30);
@@ -532,10 +504,8 @@ TEST(SetInsertTest, RRRotate) {
   std::vector<int> result(s.begin(), s.end());
   std::vector<int> expected = {10, 20, 30};
   EXPECT_EQ(result, expected);
-  s.print();
 }
 
-// 4
 TEST(SetInsertTest, LRRotate) {
   s21::set<int> s;
   s.insert(10);
@@ -544,10 +514,8 @@ TEST(SetInsertTest, LRRotate) {
   std::vector<int> result(s.begin(), s.end());
   std::vector<int> expected = {10, 20, 30};
   EXPECT_EQ(result, expected);
-  s.print();
 }
 
-// 5
 TEST(SetInsertTest, RLRotate) {
   s21::set<int> s;
   s.insert(10);
@@ -556,10 +524,8 @@ TEST(SetInsertTest, RLRotate) {
   std::vector<int> result(s.begin(), s.end());
   std::vector<int> expected = {10, 20, 30};
   EXPECT_EQ(result, expected);
-  s.print();
 }
 
-// 6
 TEST(SetInsertTest, RecoloringUncleRed) {
   s21::set<int> s;
   s.insert(10);
@@ -569,10 +535,8 @@ TEST(SetInsertTest, RecoloringUncleRed) {
   s.insert(6);  // дядя (20) красный, будет перекраска
   std::vector<int> result(s.begin(), s.end());
   EXPECT_EQ(result, std::vector<int>({1, 5, 6, 10, 20}));
-  s.print();
 }
 
-// 7
 TEST(SetInsertTest, RecoloringWithRecursion) {
   s21::set<int> s;
   s.insert(10);
@@ -583,7 +547,6 @@ TEST(SetInsertTest, RecoloringWithRecursion) {
   s.insert(0);  // приведёт к перекраске деда (5), и пойдёт вверх к 10
   std::vector<int> result(s.begin(), s.end());
   EXPECT_EQ(result, std::vector<int>({0, 1, 5, 6, 10, 20}));
-  s.print();
 }
 
 // 8
@@ -594,7 +557,6 @@ TEST(SetInsertTest, RLRotateAtRoot) {
   s.insert(60);  // RL-поворот на корне
   std::vector<int> result(s.begin(), s.end());
   EXPECT_EQ(result, std::vector<int>({50, 60, 70}));
-  s.print();
 }
 
 TEST(SetInsertTest, RLRotate_SunWithChildren) {
@@ -607,7 +569,6 @@ TEST(SetInsertTest, RLRotate_SunWithChildren) {
   s.insert(35);  // RL-поворот, sun = 30, есть 20 и 40
   std::vector<int> result(s.begin(), s.end());
   EXPECT_EQ(result, std::vector<int>({10, 20, 30, 35, 40, 60}));
-  s.print();
 }
 
 TEST(SetInsertTest, RLRotate_SunHasLeftChildOnly) {
@@ -618,7 +579,6 @@ TEST(SetInsertTest, RLRotate_SunHasLeftChildOnly) {
   s.insert(55);  // sun = 60, есть только левый
   std::vector<int> result(s.begin(), s.end());
   EXPECT_EQ(result, std::vector<int>({50, 55, 60, 80}));
-  s.print();
 }
 
 TEST(SetInsertTest, RLRotate_SunHasRightChildOnly) {
@@ -629,7 +589,6 @@ TEST(SetInsertTest, RLRotate_SunHasRightChildOnly) {
   s.insert(65);  // sun = 60, есть только правый
   std::vector<int> result(s.begin(), s.end());
   EXPECT_EQ(result, std::vector<int>({50, 60, 65, 80}));
-  s.print();
 }
 
 TEST(SetInsertTest, RLRotate_SunHasBothChildren) {
@@ -641,7 +600,6 @@ TEST(SetInsertTest, RLRotate_SunHasBothChildren) {
   s.insert(65);  // sun->right_
   std::vector<int> result(s.begin(), s.end());
   EXPECT_EQ(result, std::vector<int>({50, 55, 60, 65, 80}));
-  s.print();
 }
 
 TEST(SetInsertTest, InsertManyFixedElements) {
@@ -663,7 +621,6 @@ TEST(SetInsertTest, InsertManyFixedElements) {
   s.insert(65);
   s.insert(75);
   s.insert(85);
-  s.print();
   // Собираем результат в вектор
   std::vector<int> result(s.begin(), s.end());
 
@@ -724,8 +681,6 @@ TEST(SetIteratorTest, DecrementWorks) {
   --it;  // 10
   EXPECT_EQ(*it, 10);
 }
-
-
 
 // Тест оператора сравнения итераторов
 TEST(SetIteratorTest, IteratorComparison) {
@@ -1401,21 +1356,14 @@ TEST(SetEraseCasesTest, RemoveMultipleElementsInBigTree) {
   s21::set<int> s;
   for (int i = 1; i <= 50; ++i) {
     s.insert(i);
-    std::cout << s.size() << std::endl;
   }
   // Удаляем узлы с разной позицией: листы, с 1 и 2 детьми
-  std::cout << "deleted----" << std::endl;
 
   s.erase(s.find(1));
-  std::cout << s.size() << std::endl;
   s.erase(s.find(25));
-  std::cout << s.size() << std::endl;
   s.erase(s.find(50));
-  std::cout << s.size() << std::endl;
   s.erase(s.find(30));
-  std::cout << s.size() << std::endl;
   s.erase(s.find(10));
-  std::cout << s.size() << std::endl;
 
   EXPECT_EQ(s.size(), 45);
   EXPECT_FALSE(s.contains(1));
@@ -1433,8 +1381,6 @@ TEST(SetTest, LRRotate_GrandIsLeftChild) {
   set.insert(5);
   set.insert(15);
   set.insert(13);  // Здесь произойдет LR-ротация
-
-  set.print();
 }
 
 TEST(SetTest, LRRotate_SunHasRightChild) {
@@ -1446,5 +1392,4 @@ TEST(SetTest, LRRotate_SunHasRightChild) {
   set.insert(15);
   set.insert(13);
   set.insert(14);  // У sun (13) появился правый потомок
-  set.print();
 }

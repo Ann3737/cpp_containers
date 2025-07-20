@@ -20,6 +20,7 @@ class rbtree {
     Node* right = nullptr;
     bool red = true;
 
+    // конструктор по заданной паре
     Node(const value_type& val)
         : value(val),
           parent(nullptr),
@@ -27,6 +28,7 @@ class rbtree {
           right(nullptr),
           red(true) {}
 
+    // конструктор по заданной паре и узлу
     Node(const value_type& val, Node* par)
         : value(val), parent(par), left(nullptr), right(nullptr), red(true) {}
   };
@@ -35,14 +37,17 @@ class rbtree {
   friend class const_iterator;
 
  public:
+  // конструктор по умолчанию
   rbtree() : root_(nullptr), size_(0) {}
 
+  // констурктор копирования
   rbtree(const rbtree& tree) : rbtree() {
     for (auto it = tree.begin(); it != tree.end(); ++it) {
       this->insert(*it);
     }
   }
 
+  // конструктор перемещения
   rbtree(rbtree&& tree) noexcept : root_(tree.root_), size_(tree.size_) {
     tree.size_ = 0;
     tree.root_ = nullptr;
@@ -56,6 +61,7 @@ class rbtree {
     this->size_ = 0;
   }
 
+  // оператор копирования
   rbtree& operator=(const rbtree& tree) {
     if (this != &tree) {
       if (this->root_) {
@@ -70,6 +76,7 @@ class rbtree {
     return *this;
   }
 
+  // оператор присваивания
   rbtree& operator=(rbtree&& tree) noexcept {
     if (this != &tree) {
       if (this->root_) {
@@ -83,6 +90,7 @@ class rbtree {
     return *this;
   }
 
+  // возвращает итератор на искомый ключ
   iterator find(const Key& key) {
     return iterator(findNode<Node*>(this->root_, key), this->root_);
   }
@@ -91,6 +99,7 @@ class rbtree {
     return const_iterator(findNode<const Node*>(this->root_, key), this->root_);
   }
 
+  // удаляет и возвращает итератор на следующий узел после удаляемого
   iterator erase(iterator it) {
     iterator next = it;
     next++;
@@ -106,6 +115,8 @@ class rbtree {
     return next;
   }
 
+  // вставляет элемент и возвращает пару: итератор и успешно ли произошла
+  // вставка
   std::pair<iterator, bool> insert(const value_type& value) {
     return insertNode(value);
   }
@@ -114,6 +125,8 @@ class rbtree {
     return insertNode(std::make_pair(key, value));
   }
 
+  // вставляет элемент или назначает его текущему элементу, если ключ уже
+  // существует
   std::pair<iterator, bool> insert_or_assign(const Key& key,
                                              const Value& value) {
     return insert_or_assignNode(key, value);
@@ -165,6 +178,7 @@ class rbtree {
     }
   }
 
+  // выполняет поиск нужного узла
   template <typename NodePtr>
   NodePtr findNode(NodePtr root, const Key& key) const {
     NodePtr current = root;
@@ -178,6 +192,7 @@ class rbtree {
     return current;
   }
 
+  // удаляет нужный узел
   void eraseNode(Node* node) {
     Node* current = node;
     if (!current) {
@@ -188,7 +203,7 @@ class rbtree {
     Node* replacementNode = nullptr;
     Node* parentNode = nullptr;
 
-    // Case 1: deleted node hasn't children
+    // Case 1: удаление узла без детей
     if (!current->left && !current->right) {
       if (current->parent) {
         if (current->parent->left == current) {
@@ -209,7 +224,7 @@ class rbtree {
       }
       return;
     } else if (!current->left || !current->right) {
-      // Case 2: deleted node has only one child
+      // Case 2: у удаляемого узла только 1 ребенок
       Node* child = current->left ? current->left : current->right;
 
       if (!current->parent) {
@@ -237,7 +252,7 @@ class rbtree {
       }
       return;
     } else {
-      // Case 3: deleted node has both children
+      // Case 3: у удаляемого узла 2 ребенка
       Node* temp = current->right;
       while (temp->left) {
         temp = temp->left;
@@ -300,6 +315,7 @@ class rbtree {
     }
   }
 
+  // вставляет новый узел
   std::pair<iterator, bool> insertNode(const value_type& value) {
     Node* current = this->root_;
     Node* parent = nullptr;
@@ -311,7 +327,7 @@ class rbtree {
       } else if (value.first > current->value.first) {
         current = current->right;
       } else {
-        // if key already in the tree - do nothing (std::map)
+        // если ключ уже есть в дереве - ничего не делаем (std::map)
         return {iterator(current), false};
       }
     }
@@ -330,6 +346,7 @@ class rbtree {
     return {iterator(newNode), true};
   }
 
+  // вставляет новый узел
   std::pair<iterator, bool> insert_or_assignNode(const Key& key,
                                                  const Value& value) {
     Node* current = this->root_;
@@ -342,7 +359,8 @@ class rbtree {
       } else if (key > current->value.first) {
         current = current->right;
       } else {
-        // if key already in the tree - change value and return false
+        // если ключ уже есть в дереве - меняем значение у ключа и возвращаем
+        // false
         current->value.second = value;
         return {iterator(current), false};
       }
@@ -359,10 +377,11 @@ class rbtree {
     }
     rebalanceAfterInsert(newNode);
     this->size_++;
-    // if we successfully insert node - return true
+    // если узел успешно вставлен - возвращаем true
     return {iterator(newNode), true};
   }
 
+  // балансировка дерева после вставки нового узла
   void rebalanceAfterInsert(Node* current) {
     while (current != this->root_ && current->parent && current->parent->red) {
       Node* parent = current->parent;
@@ -374,33 +393,33 @@ class rbtree {
       Node* uncle = (parent == grandparent->left) ? grandparent->right
                                                   : grandparent->left;
 
-      // Case 1: Red uncle — recoloring
+      // Case 1: красный дядя
       if (uncle && uncle->red) {
         uncle->red = false;
         parent->red = false;
         grandparent->red = true;
         current = grandparent;
       } else {
-        // Uncle is black or null
+        // дядя черный или его нет
         if (grandparent->left == parent) {
-          // Case 2: Left-Right → rotateLeft on parent
+          // Case 2: Left-Right - левосторонний поворот на родителе
           if (current == parent->right) {
             rotateLeft(parent);
             current = parent;
             parent = current->parent;
           }
-          // Case 3: Left-Left → rotateRight on grandparent
+          // Case 3: Left-Left - правосторонний поворот на деде
           parent->red = false;
           grandparent->red = true;
           rotateRight(grandparent);
         } else {
           if (current == parent->left) {
-            // Case 2: Right-Left → rotateRight on parent
+            // Case 2: Right-Left - правосторонний поворот на родителе
             rotateRight(parent);
             current = parent;
             parent = current->parent;
           }
-          // Case 3: Right-Right → rotateLeft on grandparent
+          // Case 3: Right-Right - левосторонний поворот на деде
           parent->red = false;
           grandparent->red = true;
           rotateLeft(grandparent);
@@ -410,6 +429,7 @@ class rbtree {
     this->root_->red = false;
   }
 
+  // балансировка после удаления узла
   void rebalanceAfterErase(Node* current, Node* parent) {
     while (current != this->root_ && (!current || !current->red)) {
       if (parent == nullptr) {
@@ -427,7 +447,7 @@ class rbtree {
         }
       }
 
-      // Case 1: brother is red
+      // Case 1: брат красный
       if (brother && brother->red) {
         brother->red = false;
         parent->red = true;
@@ -442,7 +462,7 @@ class rbtree {
         }
       }
 
-      // Case 2: brother and his children are black
+      // Case 2: брат и его ребенок черные
       if (brother && !brother->red && (!brother->left || !brother->left->red) &&
           (!brother->right || !brother->right->red)) {
         brother->red = true;
@@ -452,8 +472,8 @@ class rbtree {
       }
 
       if (current == parent->left) {
-        // Case 3.1: Brother is black and near child is red, but far child is
-        // black and current is left child
+        // Case 3.1: Брат черный и его ближайший ребенок красный, но дальний
+        // ребенок черный и текущий узел - это левый ребенок
         if (brother && !brother->red && brother->left && brother->left->red &&
             (!brother->right || !brother->right->red)) {
           brother->left->red = false;
@@ -462,8 +482,8 @@ class rbtree {
           brother = parent->right;
         }
       } else {
-        // Case 3.2: Brother is black and near child is red, but far child is
-        // black and current is right child
+        // Case 3.2: Брат черный и его ближайший ребенок красный, но дальний
+        // ребенок черный и текущий узел - это правый ребенок
         if (brother && !brother->red &&
             (!brother->left || !brother->left->red) && brother->right &&
             brother->right->red) {
@@ -475,8 +495,8 @@ class rbtree {
       }
 
       if (current == parent->left) {
-        // Case 4.1: Brother is black and far child is red
-        // and current is left child
+        // Case 4.1: Брат черный и его дальний ребенок красный,
+        // и текущий узел - это левый ребенок
         if (brother && !brother->red && brother->right && brother->right->red) {
           brother->red = parent->red;
           parent->red = false;
@@ -485,8 +505,8 @@ class rbtree {
           current = this->root_;
         }
       } else {
-        // Case 4.2: Brother is black and far child is red
-        // and current is right child
+        // Case 4.2: Брат черный и его дальний ребенок красный,
+        // и текущий узел - это правый ребенок
         if (brother && !brother->red && brother->left && brother->left->red) {
           brother->red = parent->red;
           parent->red = false;
@@ -502,6 +522,7 @@ class rbtree {
     }
   }
 
+  // левосторонний поворот дерева
   void rotateLeft(Node* n) {
     if (!n || !n->right) {
       return;
@@ -525,6 +546,7 @@ class rbtree {
     n->parent = rightChild;
   }
 
+  // правосторонний поворот дерева
   void rotateRight(Node* n) {
     if (!n || !n->left) {
       return;
@@ -555,14 +577,18 @@ class rbtree {
     Node* tree_root;
     iterator() = default;
 
+    // конструктор от const_iterator
     iterator(const const_iterator& it)
         : current(const_cast<Node*>(it.current)),
           tree_root(const_cast<Node*>(it.tree_root)) {}
 
+    // конструктор от узла
     iterator(Node* node) : current(node), tree_root(nullptr) {}
 
+    // конструктор от узла и корня
     iterator(Node* node, Node* root) : current(node), tree_root(root) {}
 
+    // конструктор от дерева
     iterator(const rbtree& tree) : current(tree.root_) {
       while (current && current->left) {
         current = current->left;
@@ -573,22 +599,26 @@ class rbtree {
 
     value_type* operator->() const { return &(current->value); }
 
+    // префиксный инкремент
     iterator& operator++() {
       next();
       return *this;
     }
 
+    // постфиксный инкремент
     iterator operator++(int) {
       iterator temp = *this;
       next();
       return temp;
     }
 
+    // префиксный декремент
     iterator& operator--() {
       prev();
       return *this;
     }
 
+    // постфиксный декремент
     iterator operator--(int) {
       iterator temp = *this;
       prev();
@@ -604,6 +634,7 @@ class rbtree {
     }
 
    private:
+    // переход по итератору к следующему узлу
     void next() {
       if (!current) {
         return;
@@ -624,6 +655,7 @@ class rbtree {
       }
     }
 
+    // переход по итератору к предыдущему узлу
     void prev() {
       if (!current) {
         if (!tree_root) {

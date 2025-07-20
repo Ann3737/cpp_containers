@@ -5,7 +5,7 @@
 #include <stdexcept>  // для std::out_of_range
 #include <string>     // для std::string
 #include <utility>    // для std::pair
-#include <vector>  // чтобы использовать std::vector
+#include <vector>     // чтобы использовать std::vector
 
 namespace s21 {
 
@@ -13,7 +13,7 @@ template <typename T>
 class multiset {
  private:
   enum class Color { RED, BLACK };
-  
+
   using value_type = T;
   using reference = T&;
   using const_reference = const T&;
@@ -55,7 +55,7 @@ class multiset {
 
     return current;
   }
-  
+
   void printTree(Node* node, std::string prefix = "",
                  bool isLeft = true) const {
     std::cout << prefix;
@@ -78,11 +78,10 @@ class multiset {
     printTree(node->left_, prefix + (isLeft ? "│   " : "    "), true);
     printTree(node->right_, prefix + (isLeft ? "│   " : "    "), false);
   }
-  
 
   void copyTree(Node* node) {
     if (node) {
-      insert(node->data_);  // используем твой insert с балансировкой
+      insert(node->data_);  // используем insert с балансировкой
       copyTree(node->left_);
       copyTree(node->right_);
     }
@@ -96,10 +95,10 @@ class multiset {
     root_ = sun;
 
     grand->parent_ = sun;
-    grand->right_ = nullptr;  // оставил
+    grand->right_ = nullptr;
     sun->left_ = grand;
 
-    father->left_ = nullptr;  // оставил
+    father->left_ = nullptr;
     sun->right_ = father;
     father->parent_ = sun;
 
@@ -116,7 +115,7 @@ class multiset {
     if (grand->parent_) {
       sun->parent_ = grand->parent_;
 
-      grand->parent_->right_ = sun;  // оставил
+      grand->parent_->right_ = sun;
 
     } else {
       sun->parent_ = nullptr;
@@ -124,11 +123,11 @@ class multiset {
     }
 
     grand->parent_ = sun;
- 
-    grand->left_ = nullptr;  // оставил
+
+    grand->left_ = nullptr;
     sun->right_ = grand;
 
-    father->right_ = nullptr;  // оставил
+    father->right_ = nullptr;
     sun->left_ = father;
     father->parent_ = sun;
 
@@ -208,8 +207,7 @@ class multiset {
     }
     if (current->color_ == Color::RED &&
         current->parent_->color_ == Color::RED) {
-      // std::cout << "случай когда два красных подряд" << std::endl;
-      //  Нарушено правило — запускаем балансировку!
+      //  Нарушено правило — запускаем балансировку
       Node* grandparent =
           current->parent_->parent_;  // создаем указатель на деда
 
@@ -221,14 +219,12 @@ class multiset {
 
       if (parent == grandparent->left_) {  // родитель — левый
         if (uncle != nullptr && uncle->color_ == Color::RED) {
-          // std::cout << "происходит перекраска" << std::endl;
           uncle->color_ = Color::BLACK;
           parent->color_ = Color::BLACK;
           grandparent->color_ = Color::RED;
           if (grandparent == this->root_) {
             grandparent->color_ = Color::BLACK;
           } else {
-            // std::cout << "рекурсия перекраски для деда" << std::endl;
             balance_set(grandparent);  // рекурсия для деда
           }
 
@@ -249,7 +245,6 @@ class multiset {
           if (grandparent == this->root_) {
             grandparent->color_ = Color::BLACK;
           } else {
-            // std::cout << "рекурсия перекраски для деда" << std::endl;
             balance_set(grandparent);  // рекурсия для деда
           }
 
@@ -270,8 +265,7 @@ class multiset {
       clearTree(tree->right_);
       delete tree;
     }
-  }  
-
+  }
 
   void rotateLeft(Node*& n) {
     if (!n || !n->right_) {
@@ -300,7 +294,7 @@ class multiset {
     if (!n || !n->left_) {
       return;
     }
-    Node* leftChild = n->left_;  // 12
+    Node* leftChild = n->left_;
     n->left_ = leftChild->right_;
 
     if (leftChild->right_) {
@@ -318,17 +312,16 @@ class multiset {
     leftChild->right_ = n;
     n->parent_ = leftChild;
   }
-  
-
 
  public:
-
   /*---- Конструкторы -----*/
   multiset() : root_(nullptr), size_(0) {}
 
   multiset(const T& value) : root_(nullptr), size_(0) { insert(value); }
 
-  multiset(const multiset& other) : root_(nullptr), size_(0) { copyTree(other.root_); }
+  multiset(const multiset& other) : root_(nullptr), size_(0) {
+    copyTree(other.root_);
+  }
 
   multiset(multiset&& other) noexcept : root_(other.root_), size_(other.size_) {
     other.root_ = nullptr;
@@ -368,10 +361,6 @@ class multiset {
     }
     return *this;
   }
-    
-  
-
-
 
   void clear() {
     clearTree(root_);
@@ -400,7 +389,6 @@ class multiset {
     friend class multiset<T>;
 
    private:
-    /**/
     Node* current_;  // текущий узел
 
     Node* root;
@@ -413,9 +401,7 @@ class multiset {
     using pointer = T*;
     using reference = T&;
     /*констуктор*/
-    iterator(Node* node, Node* root = nullptr) : current_(node), root(root) {
-      // std::cout << "В КОНСТРУКТОРЕ" << std::endl;
-    }
+    iterator(Node* node, Node* root = nullptr) : current_(node), root(root) {}
 
     // Разыменование — получаем значение
     T& operator*() const {
@@ -425,7 +411,7 @@ class multiset {
       return current_->data_;
     }  // *it — получить данные
 
-    /*префиксный инкримент*/
+    /*префиксный инкремент*/
     iterator& operator++() {
       // здесь должен быть код
       if (current_ == nullptr) return *this;  // end()
@@ -447,10 +433,8 @@ class multiset {
       return *this;
     }
 
-    /*дикремент*/
+    /*декремент*/
     iterator& operator--() {
-      // здесь здесь должен быть код
-      // std::cout << "В ДИКРЕМЕНТЕ" << std::endl;
       if (current_ == nullptr) {
         current_ = this->root;
         while (current_->right_ != nullptr) {
@@ -488,8 +472,8 @@ class multiset {
     friend class multiset<T>;
 
    private:
-    const Node* current_;  // 👈 указатель на const Node
-    const Node* root;      // 👈 root тоже const
+    const Node* current_;  // указатель на const Node
+    const Node* root;      // root тоже const
 
    public:
     // Конструктор
@@ -560,8 +544,6 @@ class multiset {
     }
   };
 
-  // using iterator = typename set<T>::iterator;
-
   iterator begin() {
     if (root_ == nullptr) {
       return end();  // Возвращаем итератор на "конец"
@@ -574,10 +556,7 @@ class multiset {
     return iterator(start, root_);
   }
 
-  iterator end() {
-    // std::cout << " T E S T -  end()" << std::endl;
-    return iterator(nullptr, root_);
-  }
+  iterator end() { return iterator(nullptr, root_); }
 
   // Версии для const-объекта
   const_iterator begin() const {
@@ -645,12 +624,11 @@ class multiset {
     for (auto it = other.begin(); it != other.end();) {
       auto next = it;
       ++next;
-      insert(*it);        // просто вставляем
-      other.erase(it);    // удаляем из other
+      insert(*it);      // просто вставляем
+      other.erase(it);  // удаляем из other
       it = next;
     }
   }
-
 
   void rebalanceAfterErase(Node*& current, Node*& Parent) {
     while (current != root_ && (!current || current->color_ == Color::BLACK)) {
@@ -743,13 +721,13 @@ class multiset {
       current->color_ = Color::BLACK;
     }
   }
-  
-  iterator erase(iterator pos){
-    if (pos == end()) return end();  // безопасно
+
+  iterator erase(iterator pos) {
+    if (pos == end()) return end();
     auto next_it = pos;
     ++next_it;
     remove(pos);
-   
+
     return next_it;
   }
 
@@ -757,14 +735,15 @@ class multiset {
     auto range = equal_range(value);
     size_type count = 0;
     for (auto it = range.first; it != range.second;) {
-      it = erase(it);  // используем erase(iterator), чтобы удалить по одному элементу и получить следующий итератор
+      it = erase(it);  // используем erase(iterator), чтобы удалить по одному
+                       // элементу и получить следующий итератор
       ++count;
     }
     return count;
   }
 
   void remove(iterator pos) {
-    Node* curr = pos.current_;  // deleted
+    Node* curr = pos.current_;
     if (!curr) {
       return;
     }
@@ -782,7 +761,7 @@ class multiset {
           curr->parent_->right_ = nullptr;
         }
 
-        parentNode = curr->parent_;  //
+        parentNode = curr->parent_;
 
       } else {
         this->root_ = nullptr;  // удаляем единственный узел (корень)
@@ -824,7 +803,7 @@ class multiset {
       return;
       /* 3 случай 2 ребенка*/
     } else {
-      Node* temp = curr->right_;  // нода для правого поддерева
+      Node* temp = curr->right_;  // узел для правого поддерева
 
       /*-- минимальный в правом поддереве --*/
       while (temp->left_) {
@@ -854,7 +833,6 @@ class multiset {
           temp->parent_->left_ = temp->right_;
         } else {
           temp->parent_->right_ = temp->right_;
-          std::cout << "ERROR" << std::endl;
         }
         if (temp->right_) {
           temp->right_->parent_ = temp->parent_;
@@ -883,7 +861,6 @@ class multiset {
       isEraseNodeRed = (curr->color_ == Color::RED);
       delete curr;
       if (!isEraseNodeRed) {
-        std::cout << "---!--!---!---!----!--!-----" << std::endl;
         rebalanceAfterErase(replacementNode, parentNode);
       }
       if (this->size_ > 0) {
@@ -897,34 +874,34 @@ class multiset {
     Node* result = nullptr;
 
     while (current != nullptr) {
-        if (current->data_ < x) {
-            current = current->right_;
-        } else {
-            result = current;
-            current = current->left_;
-        }
+      if (current->data_ < x) {
+        current = current->right_;
+      } else {
+        result = current;
+        current = current->left_;
+      }
     }
 
     return result ? iterator(result) : end();
   }
 
-  const_iterator lower_bound(const T& x) const{
+  const_iterator lower_bound(const T& x) const {
     Node* current = root_;
     Node* result = nullptr;
 
     while (current != nullptr) {
-        if (current->data_ < x) {
-            current = current->right_;
-        } else {
-            result = current;
-            current = current->left_;
-        }
+      if (current->data_ < x) {
+        current = current->right_;
+      } else {
+        result = current;
+        current = current->left_;
+      }
     }
 
     return const_iterator(result);
   }
 
- iterator upper_bound(const T& x) {
+  iterator upper_bound(const T& x) {
     Node* current = root_;
     Node* result = nullptr;
 
@@ -937,37 +914,36 @@ class multiset {
       }
     }
 
-    if (result == nullptr){
+    if (result == nullptr) {
       return end();
     }
-      
 
     return iterator(result);
   }
-  const_iterator upper_bound(const T& x) const{
+  const_iterator upper_bound(const T& x) const {
     Node* current = root_;
     Node* result = nullptr;
 
     while (current != nullptr) {
-        if (current->data_ <= x) {
-            current = current->right_;
-        } else {
-            result = current;
-            current = current->left_;
-        }
+      if (current->data_ <= x) {
+        current = current->right_;
+      } else {
+        result = current;
+        current = current->left_;
+      }
     }
 
     return const_iterator(result);
   }
-  
+
   std::pair<iterator, iterator> equal_range(const T& x) {
     return {lower_bound(x), upper_bound(x)};
   }
 
-  std::pair<const_iterator, const_iterator> equal_range(const T& x) const{
+  std::pair<const_iterator, const_iterator> equal_range(const T& x) const {
     return {lower_bound(x), upper_bound(x)};
   }
-  
+
   size_type count(const T& value) const {
     auto range = equal_range(value);
     size_type cnt = 0;
@@ -978,15 +954,15 @@ class multiset {
   }
 
   template <typename... Args>
-  std::vector<std::pair<iterator, bool>> insert_many(Args&&... args){
-    static_assert((std::is_convertible_v<Args, T> && ...),
-              "insert_many: все аргументы должны быть типа T или приводимы к нему");
+  std::vector<std::pair<iterator, bool>> insert_many(Args&&... args) {
+    static_assert(
+        (std::is_convertible_v<Args, T> && ...),
+        "insert_many: все аргументы должны быть типа T или приводимы к нему");
     static_assert(sizeof...(args) > 0,
-                "insert_many: должен быть хотя бы один аргумент");
+                  "insert_many: должен быть хотя бы один аргумент");
     std::vector<std::pair<iterator, bool>> results;
     (results.emplace_back(this->insert(std::forward<Args>(args)), true), ...);
     return results;
   }
-  
 };
-}
+}  // namespace s21

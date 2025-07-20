@@ -1,7 +1,7 @@
 #ifndef S21_LIST_H
 #define S21_LIST_H
 
-#include <initializer_list>  // для использования initializer_list
+#include <initializer_list>
 #include <iostream>
 #include <limits>
 #include <stdexcept>
@@ -12,15 +12,15 @@ template <typename T>
 
 class List {
  private:
-  struct Node {  // стуртура списка
+  struct Node {  // структура списка
     T data;
-    Node* next;  // указатель на след
+    Node* next;  // указатель на следующий
     Node* prev;  // указатель на предыдущий
     Node(const T& value) : data(value), next(nullptr), prev(nullptr) {}
   };
 
-  Node* head_;   // указатель на стуктуру первую
-  Node* tail_;   // последняя
+  Node* head_;   // указатель на первый узел
+  Node* tail_;   // указатель на последний узел
   size_t size_;  // размер
 
  public:
@@ -28,8 +28,6 @@ class List {
   using value_type = T;
   using reference = T&;
   using const_reference = const T&;
-  // using iterator = T*;
-  // using const_iterator = const T*;
   using size_type = size_t;
 
   /*------- КОНСРУКТОРЫ -------*/
@@ -59,10 +57,10 @@ class List {
 
   /* конструктор копирования */
   List(const List& other) : List() {  // вызывает конструктор по умолчанию
-    Node* current = other.head_;  // начинаем с головы чужого списка
-    while (current) {            // пока есть элементы
-      push_back(current->data);  // копируем данные
-      current = current->next;   // двигаемся дальше
+    Node* current = other.head_;      // начинаем с головы чужого списка
+    while (current) {                 // пока есть элементы
+      push_back(current->data);       // копируем данные
+      current = current->next;        // двигаемся дальше
     }
   }
 
@@ -121,10 +119,10 @@ class List {
   /*добавление в конец*/
   void push_back(const T& value) {
     Node* newNode = new Node(value);  // выделил новую структуру
-    if (tail_) {  // если последня стуктура не пустая
-      tail_->next = newNode;  // добавли в конец
-      newNode->prev = tail_;  //  добавли что последняя стала предидущей
-      tail_ = newNode;  //  и последняя стала той что мы сделали
+    if (tail_) {                      // если последня стуктура не пустая
+      tail_->next = newNode;          // добавли в конец
+      newNode->prev = tail_;          //  добавли что последняя стала предидущей
+      tail_ = newNode;                //  и последняя стала той что мы сделали
     } else {
       head_ = tail_ = newNode;  // если пустая то создаем голову и хвост
     }
@@ -134,13 +132,13 @@ class List {
   /*удаления с конца*/
   void pop_back() {
     if (tail_) {
-      if (!tail_) return;  // если список пуст — ничего не делаем
-      Node* temp = tail_;  // временная станет хвостом
-      tail_ = tail_->prev;  // хвост становится предыдущем
-      if (tail_) {  // проверка если список из 1 элемента
+      if (!tail_) return;       // если список пуст — ничего не делаем
+      Node* temp = tail_;       // временная станет хвостом
+      tail_ = tail_->prev;      // хвост становится предыдущем
+      if (tail_) {              // проверка если список из 1 элемента
         tail_->next = nullptr;  // обнулил след указатель
       } else {
-        head_ = nullptr;  // если 1элемент обнуляем голову
+        head_ = nullptr;  // если 1 элемент обнуляем голову
       }
       delete temp;  // удаляем сам хвост
       --size_;
@@ -175,10 +173,10 @@ class List {
   }
   // Метод для печати списка
   void print() {
-    Node* current = head_;  // новый указатель на голову
-    while (current) {  // пока указатель на что то указывает
+    Node* current = head_;                // новый указатель на голову
+    while (current) {                     // пока указатель на что-то указывает
       std::cout << current->data << " ";  // принтуем от начала с пробелом
-      current = current->next;  // присваеваем след элемент списка
+      current = current->next;  // присваеваем следующий элемент списка
     }
     std::cout << std::endl;  // конец строки
   }
@@ -260,7 +258,6 @@ class List {
     friend class List<T>;
 
    private:
-    /**/
     Node* current_;  // текущий узел
 
     List<T>* owner_;
@@ -275,26 +272,24 @@ class List {
     // Разыменование — получаем значение
     T& operator*() const { return current_->data; }  // *it — получить данные
 
-    /*префиксный инкримент*/
+    /*префиксный инкремент*/
     iterator& operator++() {
       current_ = current_->next;
       return *this;
     }
 
-    /*дикремент*/
+    /*декремент*/
     iterator& operator--() {
       if (current_) {
         current_ = current_->prev;
       } else {
-        current_ =
-            owner_
-                ->tail_;  // ← теперь ты можешь вернуться от end() к последнему
+        current_ = owner_->tail_;  // чтобы вернуться от end() к последнему
       }
       return *this;
     }
 
     /*операторы сравнения*/
-    bool operator!=(const iterator& other) const {  // сравнение
+    bool operator!=(const iterator& other) const {
       return current_ != other.current_;
     }
     bool operator==(const iterator& other) const {
@@ -302,7 +297,7 @@ class List {
     }
   };
 
-  /* начало списка для итератору */
+  /* начало списка для итератора */
   iterator begin() { return iterator(head_, this); }
 
   /* конец списка для итератора */
@@ -312,7 +307,6 @@ class List {
     friend class List<T>;
 
    private:
-    /**/
     Node* current_;  // текущий узел
 
     const List<T>* owner_;
@@ -330,26 +324,24 @@ class List {
       return current_->data;
     }  // *it — получить данные
 
-    /*префиксный инкримент*/
+    /*префиксный инкремент*/
     const_iterator& operator++() {
       current_ = current_->next;
       return *this;
     }
 
-    /*дикремент*/
+    /*декремент*/
     const_iterator& operator--() {
       if (current_) {
         current_ = current_->prev;
       } else {
-        current_ =
-            owner_
-                ->tail_;  // ← теперь ты можешь вернуться от end() к последнему
+        current_ = owner_->tail_;  // чтобы вернуться от end() к последнему
       }
       return *this;
     }
 
     /*операторы сравнения*/
-    bool operator!=(const const_iterator& other) const {  // сравнение
+    bool operator!=(const const_iterator& other) const {
       return current_ != other.current_;
     }
     bool operator==(const const_iterator& other) const {
@@ -362,10 +354,10 @@ class List {
   /* добавление элемента по итератору */
   iterator insert(iterator pos, const_reference value) {
     Node* newNode =
-        new Node(value);  // указатель на структуру и выделили стуктуре память
+        new Node(value);  // указатель на структуру, выделение памяти структуре
     Node* pos_node = pos.current_;  // получаем указатель на текущий узел
     newNode->next =
-        pos_node;  // в новой структуре указываем что след это иетратор
+        pos_node;  // в новой структуре указываем что следующий это итератор
     if (pos_node) {
       newNode->prev = pos_node->prev;
       if (pos_node->prev) {
@@ -449,7 +441,6 @@ class List {
     while (it2 != other.end()) {
       this->insert(it1, *it2);
       ++it2;
-      //++it1;
     }
 
     // Очищаем второй список
@@ -462,13 +453,13 @@ class List {
       Node* insert_pos = pos.current_;  // куда вставляем
       Node* before =
           insert_pos ? insert_pos->prev : tail_;  // что перед вставкой
-      Node* head_other = other.head_;  // начало второго списка
-      Node* tail_other = other.tail_;  // конец второго списка
+      Node* head_other = other.head_;             // начало второго списка
+      Node* tail_other = other.tail_;             // конец второго списка
       if (before) {  // если позиция была в середине вернется на предыдущий если
                      // end() то будет тэйл
-        before->next = head_other;  // связываем с головой 2го списка
-        head_other->prev = before;  // голова 2 списка с бефор
-      } else {  // если позиция была 1ая то бефор будет нуль (перед хэдом)
+        before->next = head_other;  // связываем с головой 2-го списка
+        head_other->prev = before;  // голова 2-го списка с бефор
+      } else {  // если позиция была 1-ая, то бефор будет нуль (перед хэдом)
         head_ = head_other;  // ставим список в начало
       }
       if (insert_pos) {
@@ -505,7 +496,7 @@ class List {
     Node* current = head_;  // начинаем с головы
     while (current && current->next) {
       if (current->data == current->next->data) {  // удаление
-        Node* temp = current->next;  // временная для удалемого
+        Node* temp = current->next;                // временная для удалемого
 
         if (temp->next) {  // если есть следующий
 
@@ -516,7 +507,7 @@ class List {
           current->next = nullptr;
         }
 
-        delete temp;  // удаляем память
+        delete temp;  // чистим память
 
       } else {
         current = current->next;
@@ -527,12 +518,12 @@ class List {
   List<T> split() {
     List<T> rightList;  // список для ретерна
     if (this->size() <=
-        1)  // если размер списка меньше 1 или 1 вернем пустой список
+        1)  // если размер списка меньше или равен 1-му, вернем пустой список
       return rightList;
 
     Node* slow = this->head_;  // медленный на голову
-    Node* fast = this->head_;  //
-    Node* prev = nullptr;      // чтобы разрезать
+    Node* fast = this->head_;
+    Node* prev = nullptr;  // чтобы разрезать
     while (fast && fast->next) {
       prev = slow;
       slow = slow->next;
@@ -541,7 +532,7 @@ class List {
     if (fast) {
       rightList.head_ = slow->next;
       if (rightList.head_ != nullptr) {
-        rightList.head_->prev = nullptr;  // важное исправление!
+        rightList.head_->prev = nullptr;
       }
       this->tail_ = slow;
       this->tail_->next = nullptr;
@@ -559,23 +550,16 @@ class List {
     while (temp) {
       rightSize++;
       rightList.tail_ = temp;
-      // std::cout << "SIZE+" << rightSize << std::endl;
       temp = temp->next;
     }
-    // rightList.tail_->next = nullptr;
-
-    // rightList.tail_ = temp->prev;
     rightList.size_ = rightSize;
     size_t leftsize = 0;
     temp = this->head_;
     while (temp) {
       leftsize++;
-      // std::cout << "SIZE --" << rightSize << std::endl;
       temp = temp->next;
     }
     this->size_ = leftsize;
-    // std::cout<< leftsize << std::endl;
-    // rightList.print();
     return rightList;
   }
 

@@ -15,14 +15,18 @@ TEST(ArrayTest, CopyAssignmentOperator) {
   std::array<int, 3> std_b;
   std_b = std_a;
 
-  for (size_t i = 0; i < 3; ++i) EXPECT_EQ(s21_b[i], std_b[i]);
+  for (size_t i = 0; i < 3; ++i) {
+    EXPECT_EQ(s21_b[i], std_b[i]);
+  }
 }
 
 TEST(ArrayTest, AtMethod) {
   array<int, 3> s21_arr = {10, 20, 30};
   std::array<int, 3> std_arr = {10, 20, 30};
 
-  for (size_t i = 0; i < 3; ++i) EXPECT_EQ(s21_arr.at(i), std_arr.at(i));
+  for (size_t i = 0; i < 3; ++i) {
+    EXPECT_EQ(s21_arr.at(i), std_arr.at(i));
+  }
 
   EXPECT_THROW(s21_arr.at(3), std::out_of_range);
   EXPECT_THROW(std_arr.at(3), std::out_of_range);
@@ -32,7 +36,9 @@ TEST(ArrayTest, OperatorSquareBrackets) {
   array<int, 3> s21_arr = {5, 6, 7};
   std::array<int, 3> std_arr = {5, 6, 7};
 
-  for (size_t i = 0; i < 3; ++i) EXPECT_EQ(s21_arr[i], std_arr[i]);
+  for (size_t i = 0; i < 3; ++i) {
+    EXPECT_EQ(s21_arr[i], std_arr[i]);
+  }
 }
 
 TEST(ArrayTest, FrontMethod) {
@@ -61,14 +67,18 @@ TEST(ArrayTest, DefaultConstructor) {
   s21::array<int, 3> s21_arr;
   std::array<int, 3> std_arr{};
 
-  for (size_t i = 0; i < 3; ++i) EXPECT_EQ(s21_arr[i], std_arr[i]);
+  for (size_t i = 0; i < 3; ++i) {
+    EXPECT_EQ(s21_arr[i], std_arr[i]);
+  }
 }
 
 TEST(ArrayTest, InitializerListConstructor) {
   array<int, 3> s21_arr = {1, 2};
   std::array<int, 3> std_arr = {1, 2};
 
-  for (size_t i = 0; i < 3; ++i) EXPECT_EQ(s21_arr[i], std_arr[i]);
+  for (size_t i = 0; i < 3; ++i) {
+    EXPECT_EQ(s21_arr[i], std_arr[i]);
+  }
 }
 
 TEST(ArrayTest, InitializerListTooMany) {
@@ -81,7 +91,9 @@ TEST(ArrayTest, CopyConstructor) {
   std::array<int, 3> std_src = {5, 6, 7};
   std::array<int, 3> std_copy(std_src);
 
-  for (size_t i = 0; i < 3; ++i) EXPECT_EQ(s21_copy[i], std_copy[i]);
+  for (size_t i = 0; i < 3; ++i) {
+    EXPECT_EQ(s21_copy[i], std_copy[i]);
+  }
 }
 
 TEST(ArrayTest, MoveConstructor) {
@@ -91,7 +103,9 @@ TEST(ArrayTest, MoveConstructor) {
   array<int, 3> s21_moved(std::move(s21_src));
   std::array<int, 3> std_moved(std::move(std_src));
 
-  for (size_t i = 0; i < 3; ++i) EXPECT_EQ(s21_moved[i], std_moved[i]);
+  for (size_t i = 0; i < 3; ++i) {
+    EXPECT_EQ(s21_moved[i], std_moved[i]);
+  }
 }
 
 TEST(ArrayTest, MoveAssignmentOperator) {
@@ -104,7 +118,9 @@ TEST(ArrayTest, MoveAssignmentOperator) {
   s21_dest = std::move(s21_src);
   std_dest = std::move(std_src);
 
-  for (size_t i = 0; i < 3; ++i) EXPECT_EQ(s21_dest[i], std_dest[i]);
+  for (size_t i = 0; i < 3; ++i) {
+    EXPECT_EQ(s21_dest[i], std_dest[i]);
+  }
 }
 
 TEST(ArrayTest, AtValid) {
@@ -126,7 +142,9 @@ TEST(ArrayTest, OperatorSquareBrackets2) {
   array<int, 3> s21_arr = {1, 2, 3};
   std::array<int, 3> std_arr = {1, 2, 3};
 
-  for (size_t i = 0; i < 3; ++i) EXPECT_EQ(s21_arr[i], std_arr[i]);
+  for (size_t i = 0; i < 3; ++i) {
+    EXPECT_EQ(s21_arr[i], std_arr[i]);
+  }
 }
 
 TEST(ArrayTest, FrontBackAccess) {
@@ -141,8 +159,9 @@ TEST(ArrayTest, DataPointer) {
   array<int, 3> s21_arr = {1, 2, 3};
   std::array<int, 3> std_arr = {1, 2, 3};
 
-  for (size_t i = 0; i < 3; ++i)
+  for (size_t i = 0; i < 3; ++i) {
     EXPECT_EQ(*(s21_arr.data() + i), *(std_arr.data() + i));
+  }
 }
 
 TEST(ArrayTest, Iterators) {
@@ -152,8 +171,9 @@ TEST(ArrayTest, Iterators) {
   auto s21_it = s21_arr.begin();
   auto std_it = std_arr.begin();
 
-  for (size_t i = 0; i < 3; ++i, ++s21_it, ++std_it)
+  for (size_t i = 0; i < 3; ++i, ++s21_it, ++std_it) {
     EXPECT_EQ(*s21_it, *std_it);
+  }
 }
 
 TEST(ArrayTest, ConstIterators) {
@@ -163,8 +183,9 @@ TEST(ArrayTest, ConstIterators) {
   auto s21_it = s21_arr.begin();
   auto std_it = std_arr.begin();
 
-  for (size_t i = 0; i < 3; ++i, ++s21_it, ++std_it)
+  for (size_t i = 0; i < 3; ++i, ++s21_it, ++std_it) {
     EXPECT_EQ(*s21_it, *std_it);
+  }
 }
 
 TEST(ArrayTest, EmptyCheck) {
@@ -192,7 +213,9 @@ TEST(ArrayTest, Fill) {
   s21_arr.fill(42);
   std_arr.fill(42);
 
-  for (size_t i = 0; i < 4; ++i) EXPECT_EQ(s21_arr[i], std_arr[i]);
+  for (size_t i = 0; i < 4; ++i) {
+    EXPECT_EQ(s21_arr[i], std_arr[i]);
+  }
 }
 
 TEST(ArrayTest, Swap) {

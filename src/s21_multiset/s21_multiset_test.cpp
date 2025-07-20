@@ -1,50 +1,36 @@
+#include "s21_multiset.h"
+
 #include <gtest/gtest.h>
-#include "s21_multiset.h"  // твой заголовок с multiset
+
 #include <algorithm>  // std::sort
 #include <random>     // std::shuffle
 #include <vector>
 
 using namespace s21;
 
-
 TEST(MultisetInsertMany13, InsertMultipleInts) {
-    s21::multiset<int> ms;
-    auto results = ms.insert_many(10, 20, 30);
+  s21::multiset<int> ms;
+  auto results = ms.insert_many(10, 20, 30);
 
-    // Проверяем, что вставлено 3 элемента
-    ASSERT_EQ(results.size(), 3);
+  // Проверяем, что вставлено 3 элемента
+  ASSERT_EQ(results.size(), 3);
 
-    // Проверяем, что все вставки успешны (true в bool)
-    for (const auto& p : results) {
-        EXPECT_TRUE(p.second);
-    }
+  // Проверяем, что все вставки успешны (true в bool)
+  for (const auto& p : results) {
+    EXPECT_TRUE(p.second);
+  }
 
-    // Проверяем, что в контейнере теперь 3 элемента
-    EXPECT_EQ(ms.size(), 3);
+  // Проверяем, что в контейнере теперь 3 элемента
+  EXPECT_EQ(ms.size(), 3);
 }
 
 TEST(MultisetInsertMany11, InsertSingleInt) {
-    s21::multiset<int> ms;
-    auto results = ms.insert_many(42);
+  s21::multiset<int> ms;
+  auto results = ms.insert_many(42);
 
-    ASSERT_EQ(results.size(), 1);
-    EXPECT_TRUE(results[0].second);
-    EXPECT_EQ(ms.size(), 1);
-}
-
-
-// Эти тесты не компилируются, это ожидаемо — static_assert ловит ошибки
-
-TEST(MultisetInsertMany11, InsertNoArgs) {
-    s21::multiset<int> ms;
-    // Ошибка компиляции: sizeof...(args) == 0
-    // auto results = ms.insert_many();
-}
-
-TEST(MultisetInsertMany11, InsertWrongType) {
-    s21::multiset<int> ms;
-    // Ошибка компиляции: const char* не конвертируется в int
-    // auto results = ms.insert_many(1, 2, "text");
+  ASSERT_EQ(results.size(), 1);
+  EXPECT_TRUE(results[0].second);
+  EXPECT_EQ(ms.size(), 1);
 }
 
 TEST(RBTreeTest2, NewTree) {
@@ -325,7 +311,6 @@ TEST(RBTreeTest2, DeleteRootNode) {
   ASSERT_EQ(it1, tree.end());
 }
 
-
 TEST(mSetTest1, InsertAscending) {
   s21::multiset<int> set;
   for (int i = 1; i <= 50; ++i) {
@@ -363,11 +348,8 @@ TEST(SetInsertTest1, RRRotate) {
   std::vector<int> expected = {10, 20, 30};
 
   EXPECT_EQ(result, expected);
-
-  // Можно добавить вывод дерева, если есть метод print()
 }
 
-// 1
 TEST(t1t1, InsertRootOnly) {
   s21::multiset<int> s;
   s.insert(10);
@@ -375,7 +357,6 @@ TEST(t1t1, InsertRootOnly) {
   EXPECT_EQ(result, std::vector<int>{10});
 }
 
-// 2
 TEST(t1t1, LLRotate) {
   s21::multiset<int> s;
   s.insert(30);
@@ -386,7 +367,6 @@ TEST(t1t1, LLRotate) {
   EXPECT_EQ(result, expected);
 }
 
-// 3
 TEST(t1t1, RRRotate) {
   s21::multiset<int> s;
   s.insert(30);
@@ -397,7 +377,6 @@ TEST(t1t1, RRRotate) {
   EXPECT_EQ(result, expected);
 }
 
-// 4
 TEST(t1t1, LRRotate) {
   s21::multiset<int> s;
   s.insert(10);
@@ -408,7 +387,6 @@ TEST(t1t1, LRRotate) {
   EXPECT_EQ(result, expected);
 }
 
-// 5
 TEST(t1t1, RLRotate) {
   s21::multiset<int> s;
   s.insert(10);
@@ -419,7 +397,6 @@ TEST(t1t1, RLRotate) {
   EXPECT_EQ(result, expected);
 }
 
-// 6
 TEST(t1t1, RecoloringUncleRed) {
   s21::multiset<int> s;
   s.insert(10);
@@ -431,7 +408,6 @@ TEST(t1t1, RecoloringUncleRed) {
   EXPECT_EQ(result, std::vector<int>({1, 5, 6, 10, 20}));
 }
 
-// 7
 TEST(t1t1, RecoloringWithRecursion) {
   s21::multiset<int> s;
   s.insert(10);
@@ -444,7 +420,6 @@ TEST(t1t1, RecoloringWithRecursion) {
   EXPECT_EQ(result, std::vector<int>({0, 1, 5, 6, 10, 20}));
 }
 
-// 8
 TEST(t1t1, RLRotateAtRoot) {
   s21::multiset<int> s;
   s.insert(50);
@@ -509,11 +484,9 @@ TEST(SetEraseTest1, Case3_LeftBrotherLeftRedRightBlack) {
   set.insert(7);
   set.insert(1);  // <-- Удалим его, чтобы current стал nullptr и был слева
 
-
   // Теперь удалим 1 (левый чёрный лист)
   auto it = set.find(1);
   set.erase(it);
-
 }
 
 TEST(SetEraseTest1, EraseRoot) {
@@ -610,7 +583,6 @@ TEST(SetEraseTest1, EraseComplexBalanceCase) {
   std::vector<int> values = {10, 5, 15, 1, 6, 12, 17, 0, 2, 7};
   for (int val : values) set.insert(val);
 
-
   // Удалим узел, у которого два потомка и это вызовет балансировку
   auto it = set.find(5);
   ASSERT_NE(it, set.end());
@@ -661,8 +633,6 @@ TEST(ConstIteratorTest4, IncrementCoversLeftTraversalAndParentTraversal) {
   EXPECT_EQ(it, s.end());  // переход к end
 }
 
-
-
 TEST(ConstIteratorTest4, DereferenceThrowsWhenEnd) {
   multiset<int> s = {1, 2, 3};
   multiset<int>::const_iterator it = s.end();
@@ -696,7 +666,7 @@ TEST(SetOperatorTest2, MoveAssignment) {
 
 TEST(SetBalanceTest1, EraseCausesRebalanceLR) {
   multiset<int> s = {50, 20, 70, 10, 30, 25};
-  s.erase(s.find(70));  // LR дисбаланс после удаления
+  s.erase(s.find(70));  // LR ребалансировка после удаления
   EXPECT_TRUE(s.contains(25));
 }
 
@@ -798,122 +768,120 @@ TEST(SetTest1, LRRotate_SunHasRightChild) {
   set.insert(15);
   set.insert(13);
   set.insert(14);  // У sun (13) появился правый потомок
-
 }
 
 TEST(MultiSetTest1, InsertAndFindMultiple) {
-    multiset<int> ms;
-    ms.insert(10);
-    ms.insert(10);
-    ms.insert(20);
-    ms.insert(20);
-    ms.insert(20);
-    ms.insert(5);
+  multiset<int> ms;
+  ms.insert(10);
+  ms.insert(10);
+  ms.insert(20);
+  ms.insert(20);
+  ms.insert(20);
+  ms.insert(5);
 
-    // Проверка размера
-    EXPECT_EQ(ms.size(), 6);
+  // Проверка размера
+  EXPECT_EQ(ms.size(), 6);
 
-    // Проверяем, что элементы есть
-    EXPECT_NE(ms.find(10), ms.end());
-    EXPECT_NE(ms.find(20), ms.end());
-    EXPECT_NE(ms.find(5), ms.end());
+  // Проверяем, что элементы есть
+  EXPECT_NE(ms.find(10), ms.end());
+  EXPECT_NE(ms.find(20), ms.end());
+  EXPECT_NE(ms.find(5), ms.end());
 
-    // Проверяем, что элемент которого нет — возвращает end()
-    EXPECT_EQ(ms.find(100), ms.end());
+  // Проверяем, что элемент которого нет — возвращает end()
+  EXPECT_EQ(ms.find(100), ms.end());
 }
 
 TEST(MultiSetTest1, EqualRangeReturnsCorrectRange) {
-    multiset<int> ms;
-    ms.insert(10);
-    ms.insert(10);
-    ms.insert(10);
-    ms.insert(20);
-    ms.insert(30);
+  multiset<int> ms;
+  ms.insert(10);
+  ms.insert(10);
+  ms.insert(10);
+  ms.insert(20);
+  ms.insert(30);
 
-    auto range = ms.equal_range(10);
-    int count = 0;
-    for (auto it = range.first; it != range.second; ++it) {
-        EXPECT_EQ(*it, 10);
-        count++;
-    }
-    EXPECT_EQ(count, 3);  // ровно 3 одинаковых элемента 10
+  auto range = ms.equal_range(10);
+  int count = 0;
+  for (auto it = range.first; it != range.second; ++it) {
+    EXPECT_EQ(*it, 10);
+    count++;
+  }
+  EXPECT_EQ(count, 3);  // ровно 3 одинаковых элемента 10
 
-    // Проверка для элемента, которого нет
-    auto empty_range = ms.equal_range(100);
-    EXPECT_EQ(empty_range.first, empty_range.second);
+  // Проверка для элемента, которого нет
+  auto empty_range = ms.equal_range(100);
+  EXPECT_EQ(empty_range.first, empty_range.second);
 }
 
 TEST(MultiSetTest1, LowerBoundAndUpperBound) {
-    multiset<int> ms;
-    ms.insert(10);
-    ms.insert(15);
-    ms.insert(20);
-    ms.insert(25);
+  multiset<int> ms;
+  ms.insert(10);
+  ms.insert(15);
+  ms.insert(20);
+  ms.insert(25);
 
-    auto lb = ms.lower_bound(15);
-    EXPECT_NE(lb, ms.end());
-    EXPECT_EQ(*lb, 15);
+  auto lb = ms.lower_bound(15);
+  EXPECT_NE(lb, ms.end());
+  EXPECT_EQ(*lb, 15);
 
-    auto ub = ms.upper_bound(15);
-    EXPECT_NE(ub, ms.end());
-    EXPECT_EQ(*ub, 20);
+  auto ub = ms.upper_bound(15);
+  EXPECT_NE(ub, ms.end());
+  EXPECT_EQ(*ub, 20);
 
-    // lower_bound для отсутствующего элемента
-    auto lb2 = ms.lower_bound(17);
-    EXPECT_NE(lb2, ms.end());
-    EXPECT_EQ(*lb2, 20);
+  // lower_bound для отсутствующего элемента
+  auto lb2 = ms.lower_bound(17);
+  EXPECT_NE(lb2, ms.end());
+  EXPECT_EQ(*lb2, 20);
 
-    // upper_bound для элемента больше максимального
-    auto ub2 = ms.upper_bound(30);
-    EXPECT_EQ(ub2, ms.end());
+  // upper_bound для элемента больше максимального
+  auto ub2 = ms.upper_bound(30);
+  EXPECT_EQ(ub2, ms.end());
 }
 
 TEST(MultiSetTest1, EraseSingleElement) {
-    multiset<int> ms;
-    ms.insert(10);
-    ms.insert(20);
-    ms.insert(30);
+  multiset<int> ms;
+  ms.insert(10);
+  ms.insert(20);
+  ms.insert(30);
 
-    auto it = ms.find(20);
-    ASSERT_NE(it, ms.end());
-    ms.erase(it);
+  auto it = ms.find(20);
+  ASSERT_NE(it, ms.end());
+  ms.erase(it);
 
-    // Элемент 20 должен быть удалён
-    EXPECT_EQ(ms.find(20), ms.end());
-    EXPECT_EQ(ms.size(), 2);
+  // Элемент 20 должен быть удалён
+  EXPECT_EQ(ms.find(20), ms.end());
+  EXPECT_EQ(ms.size(), 2);
 }
 
 TEST(MultiSetTest1, EraseOneOfMultipleEqualElements) {
-    multiset<int> ms;
-    ms.insert(10);
-    ms.insert(10);
-    ms.insert(10);
+  multiset<int> ms;
+  ms.insert(10);
+  ms.insert(10);
+  ms.insert(10);
 
-    auto it = ms.find(10);
-    ASSERT_NE(it, ms.end());
-    ms.erase(it);  // удаляем один из трёх
+  auto it = ms.find(10);
+  ASSERT_NE(it, ms.end());
+  ms.erase(it);  // удаляем один из трёх
 
-    auto range = ms.equal_range(10);
-    int count = 0;
-    for (auto i = range.first; i != range.second; ++i) count++;
-    EXPECT_EQ(count, 2);
-    EXPECT_EQ(ms.size(), 2);
+  auto range = ms.equal_range(10);
+  int count = 0;
+  for (auto i = range.first; i != range.second; ++i) count++;
+  EXPECT_EQ(count, 2);
+  EXPECT_EQ(ms.size(), 2);
 }
 
 TEST(MultiSetTest1, EraseAllElements) {
-    multiset<int> ms;
-    ms.insert(1);
-    ms.insert(2);
-    ms.insert(3);
+  multiset<int> ms;
+  ms.insert(1);
+  ms.insert(2);
+  ms.insert(3);
 
-    while (!ms.empty()) {
-        ms.erase(ms.begin());
-    }
+  while (!ms.empty()) {
+    ms.erase(ms.begin());
+  }
 
-    EXPECT_TRUE(ms.empty());
-    EXPECT_EQ(ms.size(), 0);
+  EXPECT_TRUE(ms.empty());
+  EXPECT_EQ(ms.size(), 0);
 }
-
 
 using s21::multiset;
 
@@ -952,7 +920,6 @@ TEST(MultiSetEraseTest1, EraseAllDuplicatesInLoop) {
     ms.erase(it);
   }
 
-  //EXPECT_EQ(ms.count(10), 0);
   EXPECT_EQ(ms.size(), 0);
 }
 
@@ -966,7 +933,6 @@ TEST(MultiSetEraseTest1, EraseReturnsNextIterator) {
   auto next = ms.erase(it);
 
   EXPECT_EQ(*next, 15);
-  //EXPECT_EQ(ms.count(10), 0);
 }
 
 TEST(MultiSetEraseTest1, EraseLastElementReturnsEnd) {
@@ -985,7 +951,6 @@ TEST(MultiSetEraseTest1, EraseFromEmpty) {
   auto result = ms.erase(it);
   EXPECT_EQ(result, it);  // должен вернуть тот же
 }
-
 
 using s21::multiset;
 
@@ -1064,8 +1029,6 @@ TEST(MultisetStressTest, InsertAndCountUpTo100) {
   EXPECT_EQ(ms.count(42), 100);
 }
 
-
-
 TEST(MultisetBoundTest, BoundsAndRange) {
   multiset<int> ms = {10, 20, 20, 20, 30, 40, 40, 50};
 
@@ -1098,7 +1061,7 @@ TEST(MultiSetEraseTest1, EraseByIterator) {
   auto it = ms.find(2);
   auto next = ms.erase(it);
 
-  EXPECT_EQ(*next, 2);           // ещё одна 2 осталась
+  EXPECT_EQ(*next, 2);  // ещё одна 2 осталась
   EXPECT_EQ(ms.count(2), 1);
 
   next = ms.erase(ms.find(2));
@@ -1122,160 +1085,156 @@ TEST(MultisetEdgeCaseTest, InsertExtremeValues) {
   EXPECT_EQ(ub, ms.end());
 }
 
-
-
-
 // Проверка count и contains
 TEST(MultiSetTest1, CountAndContains) {
-    multiset<int> ms;
-    ms.insert(5);
-    ms.insert(5);
-    ms.insert(10);
+  multiset<int> ms;
+  ms.insert(5);
+  ms.insert(5);
+  ms.insert(10);
 
-    EXPECT_EQ(ms.count(5), 2);
-    EXPECT_EQ(ms.count(10), 1);
-    EXPECT_EQ(ms.count(100), 0);
+  EXPECT_EQ(ms.count(5), 2);
+  EXPECT_EQ(ms.count(10), 1);
+  EXPECT_EQ(ms.count(100), 0);
 
-    EXPECT_TRUE(ms.contains(5));
-    EXPECT_TRUE(ms.contains(10));
-    EXPECT_FALSE(ms.contains(999));
+  EXPECT_TRUE(ms.contains(5));
+  EXPECT_TRUE(ms.contains(10));
+  EXPECT_FALSE(ms.contains(999));
 }
 
 // Проверка clear
 TEST(MultiSetTest1, ClearTest) {
-    multiset<int> ms;
-    ms.insert(1);
-    ms.insert(2);
-    ms.insert(3);
+  multiset<int> ms;
+  ms.insert(1);
+  ms.insert(2);
+  ms.insert(3);
 
-    ms.clear();
-    EXPECT_TRUE(ms.empty());
-    EXPECT_EQ(ms.size(), 0);
+  ms.clear();
+  EXPECT_TRUE(ms.empty());
+  EXPECT_EQ(ms.size(), 0);
 
-    // Повторный insert после очистки
-    ms.insert(42);
-    EXPECT_FALSE(ms.empty());
-    EXPECT_EQ(ms.size(), 1);
+  // Повторный insert после очистки
+  ms.insert(42);
+  EXPECT_FALSE(ms.empty());
+  EXPECT_EQ(ms.size(), 1);
 }
 
 // Проверка swap
 TEST(MultiSetTest1, SwapTest) {
-    multiset<int> ms1;
-    multiset<int> ms2;
+  multiset<int> ms1;
+  multiset<int> ms2;
 
-    ms1.insert(1);
-    ms1.insert(2);
+  ms1.insert(1);
+  ms1.insert(2);
 
-    ms2.insert(10);
-    ms2.insert(20);
-    ms2.insert(30);
+  ms2.insert(10);
+  ms2.insert(20);
+  ms2.insert(30);
 
-    ms1.swap(ms2);
+  ms1.swap(ms2);
 
-    EXPECT_EQ(ms1.count(10), 1);
-    EXPECT_EQ(ms1.size(), 3);
+  EXPECT_EQ(ms1.count(10), 1);
+  EXPECT_EQ(ms1.size(), 3);
 
-    EXPECT_EQ(ms2.count(1), 1);
-    EXPECT_EQ(ms2.size(), 2);
+  EXPECT_EQ(ms2.count(1), 1);
+  EXPECT_EQ(ms2.size(), 2);
 }
 
 // Проверка merge
 TEST(MultiSetTest1, MergeTest) {
-    multiset<int> a;
-    multiset<int> b;
+  multiset<int> a;
+  multiset<int> b;
 
-    a.insert(1);
-    a.insert(2);
-    b.insert(2);
-    b.insert(3);
+  a.insert(1);
+  a.insert(2);
+  b.insert(2);
+  b.insert(3);
 
-    a.merge(b);
+  a.merge(b);
 
-    EXPECT_EQ(a.count(2), 2);
-    EXPECT_EQ(a.count(3), 1);
-    EXPECT_EQ(b.size(), 0);  // b должен быть пуст после merge
+  EXPECT_EQ(a.count(2), 2);
+  EXPECT_EQ(a.count(3), 1);
+  EXPECT_EQ(b.size(), 0);  // b должен быть пуст после merge
 }
 
 // Проверка итераторов (begin, end)
 TEST(MultiSetTest1, IteratorTest) {
-    multiset<int> ms;
-    ms.insert(10);
-    ms.insert(5);
-    ms.insert(20);
+  multiset<int> ms;
+  ms.insert(10);
+  ms.insert(5);
+  ms.insert(20);
 
-    std::vector<int> values;
-    for (auto it = ms.begin(); it != ms.end(); ++it) {
-        values.push_back(*it);
-    }
+  std::vector<int> values;
+  for (auto it = ms.begin(); it != ms.end(); ++it) {
+    values.push_back(*it);
+  }
 
-    // multiset хранит элементы по возрастанию
-    std::vector<int> expected = {5, 10, 20};
-    EXPECT_EQ(values, expected);
+  // multiset хранит элементы по возрастанию
+  std::vector<int> expected = {5, 10, 20};
+  EXPECT_EQ(values, expected);
 }
 
 // Проверка const итераторов
 TEST(MultiSetTest1, ConstIteratorTest4) {
-    multiset<int> ms;
-    ms.insert(10);
-    ms.insert(20);
+  multiset<int> ms;
+  ms.insert(10);
+  ms.insert(20);
 
-    const multiset<int>& const_ms = ms;
-    int sum = 0;
-    for (auto it = const_ms.begin(); it != const_ms.end(); ++it) {
-        sum += *it;
-    }
-    EXPECT_EQ(sum, 30);
+  const multiset<int>& const_ms = ms;
+  int sum = 0;
+  for (auto it = const_ms.begin(); it != const_ms.end(); ++it) {
+    sum += *it;
+  }
+  EXPECT_EQ(sum, 30);
 }
 
 // Проверка size и empty
 TEST(MultiSetTest1, SizeAndEmpty) {
-    multiset<int> ms;
-    EXPECT_TRUE(ms.empty());
-    EXPECT_EQ(ms.size(), 0);
+  multiset<int> ms;
+  EXPECT_TRUE(ms.empty());
+  EXPECT_EQ(ms.size(), 0);
 
-    ms.insert(1);
-    ms.insert(2);
-    EXPECT_FALSE(ms.empty());
-    EXPECT_EQ(ms.size(), 2);
+  ms.insert(1);
+  ms.insert(2);
+  EXPECT_FALSE(ms.empty());
+  EXPECT_EQ(ms.size(), 2);
 }
 
 // Проверка вставки большого количества элементов
 TEST(MultiSetTest1, MassInsert) {
-    multiset<int> ms;
-    for (int i = 0; i < 1000; ++i) {
-        ms.insert(i % 10);  // дубликаты
-    }
-    EXPECT_EQ(ms.size(), 1000);
-    EXPECT_EQ(ms.count(0), 100);  // 100 элементов с значением 0
+  multiset<int> ms;
+  for (int i = 0; i < 1000; ++i) {
+    ms.insert(i % 10);  // дубликаты
+  }
+  EXPECT_EQ(ms.size(), 1000);
+  EXPECT_EQ(ms.count(0), 100);  // 100 элементов с значением 0
 }
 
-// Проверка вставки через итераторы (если реализовано)
+// Проверка вставки через итераторы
 TEST(MultiSetTest1, InsertRangeIfSupported) {
-    multiset<int> ms;
-    std::vector<int> vec = {1, 2, 2, 3, 3, 3};
-    for (int val : vec)
-        ms.insert(val);
+  multiset<int> ms;
+  std::vector<int> vec = {1, 2, 2, 3, 3, 3};
+  for (int val : vec) ms.insert(val);
 
-    EXPECT_EQ(ms.count(1), 1);
-    EXPECT_EQ(ms.count(2), 2);
-    EXPECT_EQ(ms.count(3), 3);
+  EXPECT_EQ(ms.count(1), 1);
+  EXPECT_EQ(ms.count(2), 2);
+  EXPECT_EQ(ms.count(3), 3);
 }
 
 // Проверка поведения upper_bound и lower_bound на пустом контейнере
 TEST(MultiSetTest1, BoundsOnEmptyContainer) {
-    multiset<int> ms;
-    EXPECT_EQ(ms.lower_bound(5), ms.end());
-    EXPECT_EQ(ms.upper_bound(5), ms.end());
+  multiset<int> ms;
+  EXPECT_EQ(ms.lower_bound(5), ms.end());
+  EXPECT_EQ(ms.upper_bound(5), ms.end());
 }
 
 // Проверка equal_range на уникальном значении
 TEST(MultiSetTest1, EqualRangeSingle) {
-    multiset<int> ms;
-    ms.insert(7);
-    auto range = ms.equal_range(7);
-    EXPECT_NE(range.first, ms.end());
-    EXPECT_EQ(range.second, ms.end());
-    EXPECT_EQ(std::distance(range.first, range.second), 1);
+  multiset<int> ms;
+  ms.insert(7);
+  auto range = ms.equal_range(7);
+  EXPECT_NE(range.first, ms.end());
+  EXPECT_EQ(range.second, ms.end());
+  EXPECT_EQ(std::distance(range.first, range.second), 1);
 }
 
 TEST(SetTest1, InsertAscending) {

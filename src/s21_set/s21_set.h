@@ -74,7 +74,7 @@ class set {
 
   void copyTree(Node* node) {
     if (node) {
-      insert(node->data_);  // используем твой insert с балансировкой
+      insert(node->data_);  // используем insert с балансировкой
       copyTree(node->left_);
       copyTree(node->right_);
     }
@@ -118,7 +118,7 @@ class set {
 
     grand->parent_ = sun;
 
-    grand->left_ = nullptr;  // оставил
+    grand->left_ = nullptr;
     sun->right_ = grand;
     father->right_ = nullptr;
     sun->left_ = father;
@@ -200,8 +200,7 @@ class set {
     }
     if (current->color_ == Color::RED &&
         current->parent_->color_ == Color::RED) {
-      // std::cout << "случай когда два красных подряд" << std::endl;
-      //  Нарушено правило — запускаем балансировку!
+      //  Нарушено правило — запускаем балансировку
       Node* grandparent =
           current->parent_->parent_;  // создаем указатель на деда
 
@@ -213,14 +212,12 @@ class set {
 
       if (parent == grandparent->left_) {  // родитель — левый
         if (uncle != nullptr && uncle->color_ == Color::RED) {
-          // std::cout << "происходит перекраска" << std::endl;
           uncle->color_ = Color::BLACK;
           parent->color_ = Color::BLACK;
           grandparent->color_ = Color::RED;
           if (grandparent == this->root_) {
             grandparent->color_ = Color::BLACK;
           } else {
-            // std::cout << "рекурсия перекраски для деда" << std::endl;
             balance_set(grandparent);  // рекурсия для деда
           }
 
@@ -241,7 +238,6 @@ class set {
           if (grandparent == this->root_) {
             grandparent->color_ = Color::BLACK;
           } else {
-            // std::cout << "рекурсия перекраски для деда" << std::endl;
             balance_set(grandparent);  // рекурсия для деда
           }
 
@@ -263,8 +259,6 @@ class set {
   using size_type = size_t;
 
   using key_type = T;
-
-  // using const_iterator = /* пока можно скипнуть или реализовать позже */;
 
   /*---- Конструкторы -----*/
   set() : root_(nullptr), size_(0) {}
@@ -326,9 +320,7 @@ class set {
     friend class set<T>;
 
    private:
-    /**/
     Node* current_;  // текущий узел
-
     Node* root;
 
    public:
@@ -338,10 +330,9 @@ class set {
     using difference_type = std::ptrdiff_t;
     using pointer = T*;
     using reference = T&;
+
     /*констуктор*/
-    iterator(Node* node, Node* root = nullptr) : current_(node), root(root) {
-      // std::cout << "В КОНСТРУКТОРЕ" << std::endl;
-    }
+    iterator(Node* node, Node* root = nullptr) : current_(node), root(root) {}
 
     // Разыменование — получаем значение
     T& operator*() const {
@@ -351,7 +342,7 @@ class set {
       return current_->data_;
     }  // *it — получить данные
 
-    /*префиксный инкримент*/
+    /*префиксный инкремент*/
     iterator& operator++() {
       // здесь должен быть код
       if (current_ == nullptr) return *this;  // end()
@@ -373,10 +364,8 @@ class set {
       return *this;
     }
 
-    /*дикремент*/
+    /*декремент*/
     iterator& operator--() {
-      // здесь здесь должен быть код
-      // std::cout << "В ДИКРЕМЕНТЕ" << std::endl;
       if (current_ == nullptr) {
         current_ = this->root;
         while (current_->right_ != nullptr) {
@@ -414,8 +403,8 @@ class set {
     friend class set<T>;
 
    private:
-    const Node* current_;  // 👈 указатель на const Node
-    const Node* root;      // 👈 root тоже const
+    const Node* current_;  // указатель на const Node
+    const Node* root;      // root тоже const
 
    public:
     // Конструктор
@@ -486,8 +475,6 @@ class set {
     }
   };
 
-  // using iterator = typename set<T>::iterator;
-
   iterator begin() {
     if (root_ == nullptr) {
       return end();  // Возвращаем итератор на "конец"
@@ -500,10 +487,7 @@ class set {
     return iterator(start, root_);
   }
 
-  iterator end() {
-    // std::cout << " T E S T -  end()" << std::endl;
-    return iterator(nullptr, root_);
-  }
+  iterator end() { return iterator(nullptr, root_); }
 
   // Версии для const-объекта
   const_iterator begin() const {
@@ -533,7 +517,6 @@ class set {
 
       // определяем, был ли элемент реально добавлен
       if (inserted_flag) {
-        // this->print();
         size_++;
         balance_set(inserted);
         return std::make_pair(iterator(root_, root_), true);
@@ -572,9 +555,9 @@ class set {
     for (auto it = other.begin(); it != other.end();) {
       auto next = it;
       ++next;
-      auto res = insert(*it);  // ВСТАВКА ЭЛЕМЕНТА ИЗ other В ЭТО МНОЖЕСТВО
+      auto res = insert(*it);  // вставка элемента из other в это множество
       if (res.second) {
-        other.erase(it);  // ЕСЛИ ВСТАВКА УСПЕШНА — УДАЛЯЕМ ЭЛЕМЕНТ ИЗ other
+        other.erase(it);  // если вставка успешна — удаляем элемент из other
       }
       it = next;
     }
@@ -691,7 +674,7 @@ class set {
           curr->parent_->right_ = nullptr;
         }
 
-        parentNode = curr->parent_;  //
+        parentNode = curr->parent_;
 
       } else {
         this->root_ = nullptr;  // удаляем единственный узел (корень)
@@ -733,7 +716,7 @@ class set {
       return;
       /* 3 случай 2 ребенка*/
     } else {
-      Node* temp = curr->right_;  // нода для правого поддерева
+      Node* temp = curr->right_;  // узел для правого поддерева
 
       /*-- минимальный в правом поддереве --*/
       while (temp->left_) {
@@ -763,7 +746,6 @@ class set {
           temp->parent_->left_ = temp->right_;
         } else {
           temp->parent_->right_ = temp->right_;
-          std::cout << "ERROR" << std::endl;
         }
         if (temp->right_) {
           temp->right_->parent_ = temp->parent_;
@@ -792,7 +774,6 @@ class set {
       isEraseNodeRed = (curr->color_ == Color::RED);
       delete curr;
       if (!isEraseNodeRed) {
-        std::cout << "---!--!---!---!----!--!-----" << std::endl;
         rebalanceAfterErase(replacementNode, parentNode);
       }
       if (this->size_ > 0) {
@@ -828,7 +809,7 @@ class set {
     if (!n || !n->left_) {
       return;
     }
-    Node* leftChild = n->left_;  // 12
+    Node* leftChild = n->left_;
     n->left_ = leftChild->right_;
 
     if (leftChild->right_) {
@@ -869,15 +850,15 @@ class set {
   }
 
   template <typename... Args>
-  std::vector<std::pair<iterator, bool>> insert_many(Args&&... args){
-    static_assert((std::is_convertible_v<Args, T> && ...),
-              "insert_many: все аргументы должны быть типа T или приводимы к нему");
+  std::vector<std::pair<iterator, bool>> insert_many(Args&&... args) {
+    static_assert(
+        (std::is_convertible_v<Args, T> && ...),
+        "insert_many: все аргументы должны быть типа T или приводимы к нему");
     static_assert(sizeof...(args) > 0,
-                "insert_many: должен быть хотя бы один аргумент");
+                  "insert_many: должен быть хотя бы один аргумент");
     std::vector<std::pair<iterator, bool>> results;
     (results.emplace_back(this->insert(std::forward<Args>(args))), ...);
     return results;
   }
 };
-
 }  // namespace s21

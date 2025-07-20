@@ -1,12 +1,12 @@
 #include <gtest/gtest.h>
 
 #include <string>
-#include <utility>
 
 #include "s21_vector.h"
 
 using s21::vector;
 
+// Структура с пользовательским типом для тестов
 struct MyClass {
   int id;
   std::string name;
@@ -18,11 +18,13 @@ struct MyClass {
   }
 };
 
+// Вспомогательный класс для тестирования исключений при выделении памяти
 class TestVector : public s21::vector<int> {
  public:
   static pointer _AllocateData(size_type) { throw std::bad_alloc(); }
 };
 
+// Тип, выбрасывающий исключение при определённом значении конструктора
 struct ThrowOnN {
   int val;
   static int throw_at;
@@ -31,6 +33,7 @@ struct ThrowOnN {
   }
 };
 
+// Тип, выбрасывающий исключение при копировании
 struct CopyThrower {
   int val;
   static int throw_at;
@@ -58,7 +61,8 @@ TEST(VectorExceptionTests, InitializerListThrowsDuringConstruction2) {
   ThrowOnN a(0);
   ThrowOnN b(1);
 
-  auto throwing_lambda = [&]() {
+  auto throwing_lambda = [&]() {  // лямбда для захвата переменных из текущей
+                                  // области видимости по ссылке
     s21::vector<ThrowOnN> v = {a, b, ThrowOnN(2)};
   };
 
@@ -77,7 +81,7 @@ TEST(S21VectorInsertManyTest, InsertManyMiddle) {
   s21::vector<int> s21_vec{1, 2, 5};
   auto it = s21_vec.insert_many(s21_vec.begin() + 2, 3, 4);
 
-  ASSERT_EQ(s21_vec.size(), 5u);
+  ASSERT_EQ(s21_vec.size(), 5);
   EXPECT_EQ(s21_vec[0], 1);
   EXPECT_EQ(s21_vec[1], 2);
   EXPECT_EQ(s21_vec[2], 3);
@@ -90,7 +94,7 @@ TEST(S21VectorInsertManyTest, InsertManyFront) {
   s21::vector<int> s21_vec{3, 4, 5};
   auto it = s21_vec.insert_many(s21_vec.begin(), 1, 2);
 
-  ASSERT_EQ(s21_vec.size(), 5u);
+  ASSERT_EQ(s21_vec.size(), 5);
   EXPECT_EQ(s21_vec[0], 1);
   EXPECT_EQ(s21_vec[1], 2);
   EXPECT_EQ(s21_vec[2], 3);
@@ -103,7 +107,7 @@ TEST(S21VectorInsertManyTest, InsertManyBack) {
   s21::vector<int> s21_vec{1, 2, 3};
   auto it = s21_vec.insert_many(s21_vec.end(), 4, 5, 6);
 
-  ASSERT_EQ(s21_vec.size(), 6u);
+  ASSERT_EQ(s21_vec.size(), 6);
   EXPECT_EQ(s21_vec[0], 1);
   EXPECT_EQ(s21_vec[1], 2);
   EXPECT_EQ(s21_vec[2], 3);
@@ -117,7 +121,7 @@ TEST(S21VectorInsertManyBackTest, InsertManyBackWorks) {
   s21::vector<int> s21_vec{1, 2, 3};
   s21_vec.insert_many_back(4, 5, 6);
 
-  ASSERT_EQ(s21_vec.size(), 6u);
+  ASSERT_EQ(s21_vec.size(), 6);
   EXPECT_EQ(s21_vec[0], 1);
   EXPECT_EQ(s21_vec[1], 2);
   EXPECT_EQ(s21_vec[2], 3);
@@ -130,7 +134,7 @@ TEST(S21VectorInsertManyTest, InsertManyEmptyVector) {
   s21::vector<int> s21_vec;
   s21_vec.insert_many(s21_vec.begin(), 10, 20, 30);
 
-  ASSERT_EQ(s21_vec.size(), 3u);
+  ASSERT_EQ(s21_vec.size(), 3);
   EXPECT_EQ(s21_vec[0], 10);
   EXPECT_EQ(s21_vec[1], 20);
   EXPECT_EQ(s21_vec[2], 30);
@@ -140,7 +144,7 @@ TEST(S21VectorInsertManyBackTest, InsertManyBackEmptyVector) {
   s21::vector<int> s21_vec;
   s21_vec.insert_many_back(7, 8, 9);
 
-  ASSERT_EQ(s21_vec.size(), 3u);
+  ASSERT_EQ(s21_vec.size(), 3);
   EXPECT_EQ(s21_vec[0], 7);
   EXPECT_EQ(s21_vec[1], 8);
   EXPECT_EQ(s21_vec[2], 9);
@@ -270,7 +274,7 @@ TEST(VectorTest, MoveConstructor) {
   EXPECT_EQ(v2[0], 7);
   EXPECT_EQ(v2[1], 8);
   EXPECT_EQ(v2[2], 9);
-  EXPECT_EQ(v1.size(), 0);  // moved-from vector should be empty
+  EXPECT_EQ(v1.size(), 0);  // должно быть пусто
 }
 
 TEST(VectorTest, ReserveIncreasesCapacity) {

@@ -1,10 +1,10 @@
-#include "s21_list.h"  // Подключаем сам класс
+#include "s21_list.h"
 
 #include <gtest/gtest.h>
 
 TEST(ListTest, InsertManyFront) {
   s21::List<int> list;
-  list.insert_many_front(10, 20, 30);  // ← должно вставиться: 30, 20, 10
+  list.insert_many_front(10, 20, 30);  // должно вставиться: 30, 20, 10
 
   std::vector<int> expected = {10, 20, 30};
   auto it = list.begin();
@@ -17,7 +17,7 @@ TEST(ListTest, InsertManyFront) {
 
 TEST(ListTest, InsertManyBack) {
   s21::List<int> list;
-  list.insert_many_back(1, 2, 3);  // ← должно вставиться: 1, 2, 3
+  list.insert_many_back(1, 2, 3);  // должно вставиться: 1, 2, 3
 
   std::vector<int> expected = {1, 2, 3};
   auto it = list.begin();
@@ -39,7 +39,7 @@ TEST(ListTest, InsertManyAtIterator) {
   ++it;  // указывает на 200
 
   auto inserted =
-      list.insert_many(it, 10, 20, 30);  // ← должно вставиться: 30, 20, 10
+      list.insert_many(it, 10, 20, 30);  // должно вставиться: 30, 20, 10
 
   std::vector<int> expected = {100, 10, 20, 30, 200, 300};
   auto cur = list.begin();
@@ -388,7 +388,7 @@ TEST(ListSwapTest, OneListEmpty) {
   // Проверяем, что элементы поменялись
   EXPECT_TRUE(list1.size() == 1);
   EXPECT_TRUE(list2.empty());
-  EXPECT_EQ(list1.front(), 10);  // Убедитесь, что в list1 есть элемент
+  EXPECT_EQ(list1.front(), 10);  // проверяем, что в list1 есть элемент
 }
 
 // Тест 3: оба списка содержат элементы
@@ -750,7 +750,7 @@ TEST(ListTest, ReverseThenErase) {
 
   auto it = list.begin();  // указывает на 300
   ++it;                    // теперь указывает на 200
-  list.erase(it);  // удалим 200 → должно остаться: 300 100
+  list.erase(it);          // удалим 200, должно остаться: 300 100
 
   testing::internal::CaptureStdout();
   list.print();
