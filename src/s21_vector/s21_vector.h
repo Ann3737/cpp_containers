@@ -152,12 +152,12 @@ class vector {
   // Возвращает итератор на начало вектора
   constexpr iterator begin() noexcept { return this->data_; }
 
-  constexpr const_iterator begin() const noexcept { return this->data_; }
+  constexpr const_iterator cbegin() const noexcept { return this->data_; }
 
   // Возвращает итератор на конец вектора
   constexpr iterator end() noexcept { return this->data_ + this->size_; }
 
-  constexpr const_iterator end() const noexcept {
+  constexpr const_iterator cend() const noexcept {
     return this->data_ + this->size_;
   }
 
@@ -294,6 +294,21 @@ class vector {
       std::swap(this->capacity_, other.capacity_);
       std::swap(this->data_, other.data_);
     }
+  }
+
+  // Вставляет несколько элементов перед позицией pos в вектор
+  template <typename... Args>
+  iterator insert_many(const_iterator pos, Args &&...args) {
+    auto it = this->begin() +
+              (pos - this->cbegin());  // получаем смещение от начала вектора
+    ((it = this->insert(it, std::forward<Args>(args)) + 1), ...);
+    return it;
+  }
+
+  // Вставляет несколько элементов в конец вектора
+  template <typename... Args>
+  void insert_many_back(Args &&...args) {
+    (this->push_back(std::forward<Args>(args)), ...);
   }
 
  private:
